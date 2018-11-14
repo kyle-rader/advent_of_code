@@ -36,11 +36,11 @@ class Instruction:
             yield current_cell
         else:
             for d in ranges[0]:
-                yield from self._gen_cells(ranges[1:], [d] + current_cell)
+                yield from self._gen_cells(ranges[1:], current_cell + [d])
 
 
     def _dimension_ranges(self):
-        return [range(x, y+1) for [x, y] in [sorted([a, b]) for a,b in zip(self.start, self.end)]]
+        return [range(x, y+1) for x, y in [sorted([a, b]) for a, b in zip(self.start, self.end)]]
 
     @classmethod
     def parse(cls, line: str):

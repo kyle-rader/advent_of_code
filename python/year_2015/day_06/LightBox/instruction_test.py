@@ -8,9 +8,9 @@ from .instruction import Instruction, _parse_number_list
     (Instruction([489, 959], [759, 964], 'on'), "turn on 489,959 through 759,964"),
     (Instruction([427, 423], [929, 502], 'off'), "turn off 427,423 through 929,502"),
     (Instruction([0, 1, 1], [2, 5, 10], 'off'), "turn off 0,1,1 through 2,5, 10"),
-    (Instruction([0,1], [2,5], 'toggle'), "toggle 0 , 1 through 2,5"),
-    (Instruction([0,0,0,0], [2,5,1,9], 'toggle'), "toggle 0,0,0,0 through 2,5,1,9"),
-    (Instruction([0,0,0], [2,5,1], 'toggle'), "  ToGgLe 0, 0 ,  0 Through 2 , 5, 1 "),
+    (Instruction([0, 1], [2, 5], 'toggle'), "toggle 0 , 1 through 2,5"),
+    (Instruction([0, 0, 0, 0], [2, 5, 1, 9], 'toggle'), "toggle 0,0,0,0 through 2,5,1,9"),
+    (Instruction([0, 0, 0], [2, 5, 1], 'toggle'), "  ToGgLe 0, 0 ,  0 Through 2 , 5, 1 "),
 ])
 def test_parse_instruction(exp: Instruction, raw_instruction: str):
     result = Instruction.parse(raw_instruction)
@@ -48,21 +48,25 @@ def test_instruction_must_have_valid_dimensions(raw_instruction: str):
 def test_parse_number_list(exp: List[int], numbers: str):
     assert exp == _parse_number_list(numbers)
 
-two_d_box = [[0, 0],
-      [0, 1],
-      [1, 0],
-      [1, 1],
-      [2, 0],
-      [2, 1]]
 
-three_d_box = [[0, 0, 0],
-      [0, 0, 1],
-      [0, 1, 0],
-      [0, 1, 1],
-      [1, 0, 0],
-      [1, 0, 1],
-      [1, 1, 0],
-      [1, 1, 1]]
+two_d_box = [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    [2, 0],
+    [2, 1]]
+
+three_d_box = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 1],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 1, 0],
+    [1, 1, 1]]
+
 
 @pytest.mark.parametrize("exp, instruction", [
     ([[0]], Instruction([0], [0], 'on')),
