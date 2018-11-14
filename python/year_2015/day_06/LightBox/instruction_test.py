@@ -47,3 +47,32 @@ def test_instruction_must_have_valid_dimensions(raw_instruction: str):
 ])
 def test_parse_number_list(exp: List[int], numbers: str):
     assert exp == _parse_number_list(numbers)
+
+two_d_box = [[0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [2, 0],
+      [2, 1]]
+
+three_d_box = [[0, 0, 0],
+      [0, 0, 1],
+      [0, 1, 0],
+      [0, 1, 1],
+      [1, 0, 0],
+      [1, 0, 1],
+      [1, 1, 0],
+      [1, 1, 1]]
+
+@pytest.mark.parametrize("exp, instruction", [
+    ([[0]], Instruction([0], [0], 'on')),
+    ([[0], [1], [2], [3]], Instruction([0], [3], 'on')),
+    (two_d_box, Instruction([0, 0], [2, 1], 'on')),
+    (two_d_box, Instruction([0, 1], [2, 0], 'on')),
+    (three_d_box, Instruction([0, 0, 0], [1, 1, 1], 'on')),
+    (three_d_box, Instruction([0, 1, 1], [1, 0, 0], 'on')),
+])
+def test_instruction_cells(exp: List[List[int]], instruction: Instruction):
+    result = set(map(str, list(instruction.cells())))
+    for cell in exp:
+        assert str(cell) in result

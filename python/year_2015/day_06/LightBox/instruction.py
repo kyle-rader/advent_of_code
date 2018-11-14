@@ -28,6 +28,20 @@ class Instruction:
     def __repr__(self):
         return str(self)
 
+    def cells(self):
+        yield from self._gen_cells(self._dimension_ranges())
+
+    def _gen_cells(self, ranges, current_cell = []):
+        if len(ranges) == 0:
+            yield current_cell
+        else:
+            for d in ranges[0]:
+                yield from self._gen_cells(ranges[1:], [d] + current_cell)
+
+
+    def _dimension_ranges(self):
+        return [range(x, y+1) for [x, y] in [sorted([a, b]) for a,b in zip(self.start, self.end)]]
+
     @classmethod
     def parse(cls, line: str):
         match = cls.instruction_re.match(line)
