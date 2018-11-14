@@ -1,14 +1,17 @@
 from typing import List
 import re
 
+
 def _parse_number_list(numbers: str) -> List[int]:
-    return list(map(int, numbers.split(',')))
+    return [int(d) for d in numbers.split(',') if d.strip()]
+
 
 class Instruction:
+    instruction_re = re.compile(
+        '^.*(?P<action>on|off|toggle)\s+(?P<start>[0-9][, 0-9]*)\s+through\s+(?P<end>[0-9][, 0-9]*)',
+        re.IGNORECASE)
 
-    instruction_re = re.compile("^.*(?P<action>on|off|toggle)\s+(?P<start>[, 0-9]+)\s+through(?P<end>[, 0-9]+)", re.IGNORECASE)
-
-    def __init__(self, start: List[int], end: List[int], action :str):
+    def __init__(self, start: List[int], end: List[int], action: str):
         self.start = start
         self.end = end
         self.action = action
@@ -29,14 +32,16 @@ class Instruction:
     def parse(cls, line: str):
         match = cls.instruction_re.match(line)
         if not match:
-            raise ValueError(f"line \"{line}\" could not be parsed!")
+            raise ValueError(f"Instruction \"{line}\" could not be parsed!")
         action = match.group('action').strip().lower()
         start = _parse_number_list(match.group('start'))
         end = _parse_number_list(match.group('end'))
 
+        if cls._dimensions_invalid(start, end):
+            raise ValueError(f"Instruction \"{line}\" must have valid coordinate pair!")
+
         return Instruction(start, end, action)
 
-
-
-
-
+    @classmethod
+    def _dimensions_invalid(cls, start: List[int], end: List[int]):
+        return len(start) != len(end) or any([d for d in start + end if d < 0])
