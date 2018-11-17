@@ -1,7 +1,8 @@
-import pytest
-from typing import Tuple, List
+from typing import List
 
-from .instruction import Instruction, _parse_number_list
+import pytest
+
+from .instruction import Instruction, _parse_number_list, _coord_to_string
 
 
 @pytest.mark.parametrize("exp, raw_instruction", [
@@ -50,33 +51,67 @@ def test_parse_number_list(exp: List[int], numbers: str):
 
 
 two_d_box = [
-    [0, 0],
-    [0, 1],
-    [1, 0],
-    [1, 1],
-    [2, 0],
-    [2, 1]]
+    '00',
+    '01',
+    '10',
+    '11',
+    '20',
+    '21']
 
 three_d_box = [
-    [0, 0, 0],
-    [0, 0, 1],
-    [0, 1, 0],
-    [0, 1, 1],
-    [1, 0, 0],
-    [1, 0, 1],
-    [1, 1, 0],
-    [1, 1, 1]]
+    '000',
+    '001',
+    '010',
+    '011',
+    '100',
+    '101',
+    '110',
+    '111']
 
 
 @pytest.mark.parametrize("exp, instruction", [
-    ([[0]], Instruction([0], [0], 'on')),
-    ([[0], [1], [2], [3]], Instruction([0], [3], 'on')),
+    (['0'], Instruction([0], [0], 'on')),
+    (['0', '1', '2', '3'], Instruction([0], [3], 'on')),
     (two_d_box, Instruction([0, 0], [2, 1], 'on')),
     (two_d_box, Instruction([0, 1], [2, 0], 'on')),
     (three_d_box, Instruction([0, 0, 0], [1, 1, 1], 'on')),
     (three_d_box, Instruction([0, 1, 1], [1, 0, 0], 'on')),
 ])
-def test_instruction_cells(exp: List[List[int]], instruction: Instruction):
-    result = set(map(str, list(instruction.cells())))
+def test_instruction_cells(exp: List[str], instruction: Instruction):
+    result = list(instruction.lights())
     for cell in exp:
         assert str(cell) in result
+
+
+def test_large_instruction_uniqueness():
+    inst = Instruction([0,0], [99, 99], 'on')
+    lights = list(inst.lights())
+    light_set = set()
+    for light in lights:
+        if light not in light_set:
+            light_set.add(light)
+        else:
+            assert light not in light_set
+
+    assert 100 * 100 == len(lights)
+
+
+@pytest.mark.parametrize("exp, coords", [
+    ('123', [1, 2, 3]),
+    ('002306', [0, 23, 6]),
+    ('000', [0, 0, 0]),
+    ('100', [1, 0, 0]),
+    ('101', [1, 0, 1]),
+    ('010100000', [10, 100, 0]),
+])
+def test_coord_to_string(exp, coords):
+    assert exp == _coord_to_string(coords)
+
+
+@pytest.mark.parametrize("coord1, coord2", [
+    ([11, 1], [1, 11]),
+    ([12, 21], [1, 221]),
+    ([12, 21], [1, 221]),
+])
+def test_coord_to_string_unique(coord1: List[int], coord2: List[int]):
+    assert _coord_to_string(coord1) != _coord_to_string(coord2)

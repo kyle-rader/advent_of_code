@@ -6,6 +6,11 @@ def _parse_number_list(numbers: str) -> List[int]:
     return [int(d) for d in numbers.split(',') if d.strip()]
 
 
+def _coord_to_string(coords: List[int]):
+    pad = max([len(str(l)) for l in coords])
+    return ''.join(map(lambda x: x.zfill(pad), map(str, coords)))
+
+
 class Instruction:
     instruction_re = re.compile(
         '^.*(?P<action>on|off|toggle)\s+(?P<start>[0-9][, 0-9]*)\s+through\s+(?P<end>[0-9][, 0-9]*)',
@@ -28,19 +33,18 @@ class Instruction:
     def __repr__(self):
         return str(self)
 
-    def cells(self):
-        yield from self._gen_cells(self._dimension_ranges())
+    def lights(self):
+        yield from self._gen_lights(self._dimension_ranges())
 
-    def _gen_cells(self, ranges, current_cell = []):
+    def _gen_lights(self, ranges, current_cell=[]):
         if len(ranges) == 0:
-            yield current_cell
+            yield _coord_to_string(current_cell)
         else:
             for d in ranges[0]:
-                yield from self._gen_cells(ranges[1:], current_cell + [d])
-
+                yield from self._gen_lights(ranges[1:], current_cell + [d])
 
     def _dimension_ranges(self):
-        return [range(x, y+1) for x, y in [sorted([a, b]) for a, b in zip(self.start, self.end)]]
+        return [range(x, y + 1) for x, y in [sorted([a, b]) for a, b in zip(self.start, self.end)]]
 
     @classmethod
     def parse(cls, line: str):
