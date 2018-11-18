@@ -15,9 +15,11 @@ instruction_set2 = [
 ]
 
 
-@pytest.mark.parametrize("exp, instructions", [
-    (2, instruction_set1),
-    (20, instruction_set2),
+@pytest.mark.parametrize("exp_lights_on, exp_brightness, instructions", [
+    (4, 8, instruction_set1),
+    (30, 70, instruction_set2),
 ])
-def test_follow_instructions_set1(exp, instructions):
-    assert exp == follow_instructions(instructions)
+def test_follow_instructions_set1(exp_lights_on, exp_brightness, instructions):
+    (lights_on, brightness) = follow_instructions(instructions)
+    assert exp_lights_on == lights_on
+    assert exp_brightness == brightness
