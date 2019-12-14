@@ -34,7 +34,7 @@ jobs:
   - task: CmdLine@2
     displayName: Run Tests
     inputs:
-      scripts: |
+      script: |
         pushd ruby
         bundle exec rspec
         popd
