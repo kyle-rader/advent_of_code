@@ -13,4 +13,10 @@ class Fuel
         fuel = for_mass(mass)
         (fuel < 0 ? 0 : fuel) + (fuel <= 0 ? 0 : for_mass_with_fuel(fuel))
     end
+
+    def self.for_masses_with_fuel(masses)
+        masses.map { |m|
+            for_mass_with_fuel(m.to_i)
+        }.sum
+    end
 end

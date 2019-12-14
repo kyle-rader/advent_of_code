@@ -17,17 +17,17 @@ RSpec.describe Fuel do
                 [100756, 33583]
             ].each do |mass, expected_fuel|
                 context "Given Module (#{mass})" do
-                it "Returns fuel needed (#{expected_fuel})" do
-                    expect(subject.for_mass(mass)).to eq expected_fuel
+                    it "Returns fuel needed (#{expected_fuel})" do
+                        expect(subject.for_mass(mass)).to eq expected_fuel
+                    end
                 end
             end
         end
 
         describe "#for_masses" do
-            let(:mods) { %w(12 14 1969) }
-                it "returns the sum of the fuels needed" do
-                    expect(subject.for_masses(mods)).to eq 658
-                end
+            let(:masses) { %w(12 14 1969) }
+            it "returns the sum of the fuels needed" do
+                expect(subject.for_masses(masses)).to eq 658
             end
         end
 
@@ -43,6 +43,13 @@ RSpec.describe Fuel do
                         expect(subject.for_mass_with_fuel(mass)).to eq expected_fuel
                     end
                 end
+            end
+        end
+
+        describe "#for_masses_with_fuel" do
+            let(:masses) { %w(2 14 1969 100756) }
+            it "gets the total sum" do
+                expect(subject.for_masses_with_fuel(masses)).to eq (50346 + 966 + 2)
             end
         end
     end
