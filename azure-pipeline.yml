@@ -1,13 +1,21 @@
+variables:
+  ruby_version: 2.6
+  python_version: 3.8
 
 jobs:
-
 - job: Ruby
   strategy:
     parallel: true
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - command: echo Running Ruby Tests
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= $(ruby_version)'
+  - task: CmdLine@2
+    inputs:
+      script: |
+        echo Starting Ruby Tests
 
 - job: Python
   strategy:
@@ -15,4 +23,12 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - command: echo Running Python Tests
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python_version)'
+      addToPath: true
+      architecture: 'x64'
+  - task: CmdLine@2
+    inputs:
+      script: |
+        echo Starting Python Tests
