@@ -4,8 +4,6 @@ variables:
 
 jobs:
 - job: Ruby
-  strategy:
-    parallel: true
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
@@ -18,8 +16,6 @@ jobs:
         echo Starting Ruby Tests
 
 - job: Python
-  strategy:
-    parallel: true
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
