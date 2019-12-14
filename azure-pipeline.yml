@@ -1,5 +1,5 @@
 variables:
-  ruby_version: 2.6
+  ruby_version: 2.6.5
   python_version: 3.8
 
 jobs:
