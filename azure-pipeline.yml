@@ -15,13 +15,17 @@ jobs:
     displayName: Install Gems
     inputs:
       script: |
-        cd ruby & bundle install
+        pushd ruby
+        bundle install
+        popd
 
   - task: CmdLine@2
     displayName: Run Tests
     inputs:
       scripts: |
-        cd ruby & bundle exec rspec
+        pushd ruby
+        bundle exec rspec
+        popd
 
 - job: Python
   pool:
