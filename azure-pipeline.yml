@@ -5,13 +5,15 @@ variables:
 trigger:
   batch: true
   branches:
-    include: master
+    include:
+    - master
 
 pr:
   autoCancel: true
   branches:
-    include: master
-    
+    include:
+    - master
+
 jobs:
 - job: Ruby
   pool:
