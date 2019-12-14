@@ -1,7 +1,10 @@
-# Advent of Code 2015
+# Kyle Rader's [Advent of Code](https://adventofcode.com) Solutions
 
-Solutions to the [Advent of code 2015 problem](https://adventofcode.com/2015)
+## Disclaimer
+If you have not solved the advent of code problems and do not wish to bias yourself (a.k.a cheating) then don't look at my solutions until after you've solved them for yourself.
 
-| Langauge | Status |
-|----------|--------|
-| <img width="50" height="50" style="margin:10px;" src="language_logos\python.png"> | [![Build status](https://dev.azure.com/kyle-rader/kyle-rader-public/_apis/build/status/advent-of-code/Advent%20Of%20Code%20Python%20Tests)](https://dev.azure.com/kyle-rader/kyle-rader-public/_build/latest?definitionId=3) |
+Happy coding ^_^
+
+## Tests
+
+[![Build Status](https://dev.azure.com/kyle-rader/kyle-rader-public/_apis/build/status/kyle-rader.advent_of_code?branchName=master)](https://dev.azure.com/kyle-rader/kyle-rader-public/_build/latest?definitionId=5&branchName=master)

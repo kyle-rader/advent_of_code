@@ -1,0 +1,55 @@
+variables:
+  ruby_version: 2.6
+  python_version: 3.8
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - master
+
+jobs:
+- job: Ruby
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: UseRubyVersion@0
+    displayName: 'Use Ruby $(ruby_version)'
+    inputs:
+      versionSpec: '>= $(ruby_version)'
+  - task: CmdLine@2
+    displayName: Install Gems
+    inputs:
+      script: |
+        pushd ruby
+        bundle install
+        popd
+
+  - task: CmdLine@2
+    displayName: Run Tests
+    inputs:
+      script: |
+        pushd ruby
+        bundle exec rspec
+        popd
+
+- job: Python
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(python_version)'
+    inputs:
+      versionSpec: '$(python_version)'
+      addToPath: true
+      architecture: 'x64'
+  - task: CmdLine@2
+    inputs:
+      script: |
+        echo Starting Python Tests
