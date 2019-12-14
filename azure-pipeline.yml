@@ -12,9 +12,16 @@ jobs:
     inputs:
       versionSpec: '>= $(ruby_version)'
   - task: CmdLine@2
+    displayName: Install Gems
     inputs:
       script: |
-        echo Starting Ruby Tests
+        cd ruby & bundle install
+
+  - task: CmdLine@2
+    displayName: Run Tests
+    inputs:
+      scripts: |
+        cd ruby & bundle exec rspec
 
 - job: Python
   pool:
