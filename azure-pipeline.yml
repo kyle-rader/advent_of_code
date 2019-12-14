@@ -3,11 +3,12 @@ variables:
   python_version: 3.8
 
 jobs:
-- job: Ruby
+- job: Ruby $(ruby_version)
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
   - task: UseRubyVersion@0
+    name: Use Ruby $(ruby_version)
     inputs:
       versionSpec: '>= $(ruby_version)'
   - task: CmdLine@2
@@ -15,11 +16,12 @@ jobs:
       script: |
         echo Starting Ruby Tests
 
-- job: Python
+- job: Python $(python_version)
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
   - task: UsePythonVersion@0
+    name: Use Python $(python_version)
     inputs:
       versionSpec: '$(python_version)'
       addToPath: true
