@@ -1,4 +1,3 @@
-require 'rspec'
 require_relative 'fuel.rb'
 
 RSpec.describe Fuel do
