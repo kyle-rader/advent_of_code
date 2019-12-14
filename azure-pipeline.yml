@@ -2,6 +2,16 @@ variables:
   ruby_version: 2.6
   python_version: 3.8
 
+trigger:
+  batch: true
+  branches:
+    include: master
+
+pr:
+  autoCancel: true
+  branches:
+    include: master
+    
 jobs:
 - job: Ruby
   pool:
