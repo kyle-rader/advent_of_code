@@ -19,6 +19,29 @@ class Wires
         min_dist
     end
 
+    def min_steps_to_cross
+        wire1 = Hash.new
+        steps = 0
+        follow_wire(wires[0]) do |x,y|
+            steps += 1
+            key = "#{x},#{y}"
+            wire1[key] = steps unless wire1.include? key
+        end
+        steps = 0
+        min_sum = nil
+        follow_wire(wires[1]) do |x,y|
+            steps += 1
+            key = "#{x},#{y}"
+            if wire1.include? key
+                sum = wire1[key] + steps
+                if min_sum == nil || sum < min_sum
+                    min_sum = sum
+                end
+            end
+        end
+        return min_sum
+    end
+
     def follow_wire(wire)
         x = y = 0
         wire.each do |step|

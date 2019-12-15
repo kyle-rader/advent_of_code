@@ -10,4 +10,5 @@ group :development do
   gem 'wdm', '>= 0.1.0' if Gem.win_platform?
   gem 'win32console' if Gem.win_platform?
   gem 'pry'
+  gem 'pry-byebug'
 end
