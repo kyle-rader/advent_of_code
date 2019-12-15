@@ -6,12 +6,18 @@ class Intcoder
         @opcode_ptr = 0
     end
 
-    def run
+    def run(noun = nil, verb = nil)
+        set_inputs(noun, verb) if noun && verb
         while opcode != 99 do
             process
             step
         end
         @program[0]
+    end
+
+    def set_inputs(noun, verb)
+        @program[1] = noun
+        @program[2] = verb
     end
 
     def opcode
@@ -26,7 +32,7 @@ class Intcoder
         case opcode
         when 1
             add
-        when 2 
+        when 2
             mult
         else
             raise "Oops, we don't know how to handle opcode '#{opcode}'"
