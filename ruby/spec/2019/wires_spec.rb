@@ -57,6 +57,26 @@ L995,D93,L293,U447,L793,D605,R497,D155,L542,D570,R113,D779,L510,U367,L71,D980,R2
         end
     end
 
+    describe "#min_steps_to_cross" do
+        subject { Wires.new(input).min_steps_to_cross }
+        it { should eq 30 }
+
+        context "with test2" do
+            let(:input) { test2 }
+            it { should eq 610 }
+        end
+
+        context "with test3" do
+            let(:input) { test3 }
+            it { should eq 410 }
+        end
+
+        context "with test4" do
+            let(:input) { test4 }
+            it { should eq 7388 }
+        end
+    end
+
     describe "#follow_wire" do
         context "with simple wire" do
             let(:wire) { ["R2", "U1", "L1", "D1"] }
