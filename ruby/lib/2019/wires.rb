@@ -39,7 +39,7 @@ class Wires
                 end
             end
         end
-        return min_sum
+        min_sum
     end
 
     def follow_wire(wire)
