@@ -1,4 +1,4 @@
-require_relative 'intcoder.rb'
+require 'intcoder'
 
 RSpec.describe Intcoder do
     subject {
