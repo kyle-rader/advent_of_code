@@ -1,4 +1,4 @@
-require_relative 'fuel.rb'
+require 'fuel.rb'
 
 RSpec.describe Fuel do
     let(:input) {

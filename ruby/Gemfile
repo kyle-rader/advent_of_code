@@ -3,3 +3,11 @@
 source "https://rubygems.org"
 
 gem "rspec", "~> 3.9"
+
+group :development do
+  gem 'guard'
+  gem 'guard-rspec', "~> 4.7"
+  gem 'wdm', '>= 0.1.0' if Gem.win_platform?
+  gem 'win32console' if Gem.win_platform?
+  gem 'pry'
+end

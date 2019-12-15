@@ -1,4 +1,4 @@
-[**.rb]
+[*]
 indent_size = 4
 indent_style = space
 end_of_line = lf
