@@ -4,7 +4,7 @@ RSpec.describe Intcoder, "#run" do
   let(:input) { [] }
   let(:program) { nil }
   let(:intcoder) {
-      Intcoder.new(program)
+    Intcoder.new(program)
   }
   let(:final_program) { intcoder.program }
   let(:program_0) { final_program[0] }
@@ -39,6 +39,32 @@ RSpec.describe Intcoder, "#run" do
     let(:program) { "1101,100,-1,4,0" }
     subject { final_program }
     it { is_expected.to eq [1101, 100, -1, 4, 99] }
+  end
+
+  describe "opcodes 5-6: jumps" do
+    [
+      "3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9",
+      "3,3,1105,-1,9,1101,0,0,12,4,12,99,1"
+    ].each do |p|
+      let(:intcoder) {
+        Intcoder.new(program, verbose: true)
+      }
+      context "with program #{p}" do
+        let(:program) { p }
+        context "is zero" do
+          let(:input) { [0] }
+          it { is_expected.to eq [0] }
+        end
+        context "is positive" do
+          let(:input) { [4] }
+          it { is_expected.to eq [1] }
+        end
+        context "is negative" do
+          let(:input) { [-5] }
+          it { is_expected.to eq [1] }
+        end
+      end
+    end
   end
 
   describe "opcode 8: equals" do

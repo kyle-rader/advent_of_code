@@ -13,15 +13,17 @@ class Intcoder
   end
 
   attr_reader :opcode_ptr, :step_by, :program, :input, :output,
-    :opcode, :arg_mode
+    :opcode, :arg_mode, :verbose
 
-  def initialize(program)
+  def initialize(program, verbose = false)
     @program = program
       .split(",")
       .map {|c| c.strip.to_i }
+    @verbose = verbose
     @opcode_ptr = 0
     @input = []
     @output = []
+    puts "Created Intcoder in verbose mode with program:\n#{program}" if verbose
   end
 
   def run(noun = nil, verb = nil)
@@ -35,6 +37,7 @@ class Intcoder
   end
 
   def clear
+    puts "Clearing caches" if verbose
     @_opcode = nil
     @_arg_modes = nil
   end
@@ -57,10 +60,12 @@ class Intcoder
   end
 
   def step
+    puts "step: by #{step_by} (#{opcode_ptr} -> #{opcode_ptr + step_by})" if verbose
     @opcode_ptr += step_by
   end
 
   def process
+    puts "process opcode: #{opcode}" if verbose
     case opcode
     when 1
       do_add
@@ -70,6 +75,10 @@ class Intcoder
       do_input
     when 4
       do_output
+    when 5
+      do_jump_if_true
+    when 6
+      do_jump_if_false
     when 7
       do_less_than
     when 8
@@ -80,27 +89,66 @@ class Intcoder
   end
 
   def set_step(n)
+    puts "set_step: #{n}" if verbose
     @step_by = n
   end
 
   def do_add
+    puts "do_add: #{arg(0)} + #{arg(1)}" if verbose
     set_val(arg(0) + arg(1))
     set_step 4
   end
 
   def do_mult
+    puts "do_mult: #{arg(0)} * #{arg(1)}" if verbose
     set_val(arg(0) * arg(1))
     set_step 4
   end
 
   def do_input
-    @program[program[opcode_ptr + 1]] = input.pop
+    val = input.pop
+    puts "do_input: store #{val} at index #{program[opcode_ptr + 1]}" if verbose
+    @program[program[opcode_ptr + 1]] = val
     set_step 2
   end
 
   def do_output
-    @output << program[program[opcode_ptr + 1]]
+    puts "do_output: #{arg(0)}" if verbose
+    @output << arg(0)
     set_step 2
+  end
+
+  def do_jump_if_true
+    puts "do_jump_if_true: #{arg(0)} != 0" if verbose
+    if arg(0) != 0
+      puts "  true: opcode_ptr = #{arg(1)}" if verbose
+      @opcode_ptr = arg(1)
+      set_step 0
+    else
+      puts "  false" if verbose
+      set_step 3
+    end
+  end
+
+  def do_jump_if_false
+    puts "do_jump_if_false: #{arg(0)} == 0" if verbose
+    if arg(0) == 0
+      puts "  true: opcode_ptr = #{arg(1)}" if verbose
+      @opcode_ptr = arg(1)
+      set_step 0
+    else
+      puts "  false" if verbose
+      set_step 3
+    end
+  end
+
+  def jump_if(&block)
+    if block.call
+      @opcode_ptr = arg(1)
+      set_step 0
+    else
+      set_step 3
+    end
   end
 
   def do_less_than
@@ -118,6 +166,7 @@ class Intcoder
   end
 
   def set_val(val)
+    puts "set_val: store #{val} at index #{program[opcode_ptr + 3]}" if verbose
     @program[program[opcode_ptr + 3]] = val
   end
 
