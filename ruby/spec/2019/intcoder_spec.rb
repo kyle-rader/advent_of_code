@@ -38,5 +38,33 @@ RSpec.describe Intcoder do
                 expect(subject.output).to eq [45]
             end
         end
+
+        context "with immediate arg modes" do
+            subject { Intcoder.new program }
+            before { subject.run }
+            context "with 1101,100,-1,4,0" do
+                let(:program) { "1101,100,-1,4,0" }
+                it "has expected program" do
+                    expect(subject.program).to eq [1101, 100, -1, 4, 99]
+                end
+            end
+
+        end
+    end
+
+    describe "#self.get_modes" do
+        subject { Intcoder.get_modes m }
+        [
+            { :m => 123, :exp => [3, 2, 1] },
+            { :m => 11, :exp => [1, 1] },
+            { :m => 1, :exp => [1] },
+            { :m => 0, :exp => [] },
+        ].each do |args|
+            context "when m = #{args[:m]}" do
+                let(:m) { args[:m] }
+                it { is_expected.to eq args[:exp] }
+            end
+        end
+
     end
 end
