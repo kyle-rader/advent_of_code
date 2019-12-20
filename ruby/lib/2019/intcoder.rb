@@ -70,6 +70,8 @@ class Intcoder
       do_input
     when 4
       do_output
+    when 7
+      do_less_than
     when 8
       do_equals
     else
@@ -101,9 +103,18 @@ class Intcoder
     set_step 2
   end
 
-  def do_equals
-    set_val(arg(0) == arg(1) ? 1 : 0)
+  def do_less_than
+    set_val(true?(arg(0) < arg(1)))
     set_step 4
+  end
+
+  def do_equals
+    set_val(true?(arg(0) == arg(1)))
+    set_step 4
+  end
+
+  def true?(val)
+    val ? 1 : 0
   end
 
   def set_val(val)
