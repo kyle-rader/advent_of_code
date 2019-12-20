@@ -120,33 +120,21 @@ class Intcoder
 
   def do_jump_if_true
     puts "do_jump_if_true: #{arg(0)} != 0" if verbose
-    if arg(0) != 0
-      puts "  true: opcode_ptr = #{arg(1)}" if verbose
-      @opcode_ptr = arg(1)
-      set_step 0
-    else
-      puts "  false" if verbose
-      set_step 3
-    end
+    jump_if { arg(0) != 0 }
   end
 
   def do_jump_if_false
     puts "do_jump_if_false: #{arg(0)} == 0" if verbose
-    if arg(0) == 0
+    jump_if { arg(0) == 0 }
+  end
+
+  def jump_if(&block)
+    if block.call
       puts "  true: opcode_ptr = #{arg(1)}" if verbose
       @opcode_ptr = arg(1)
       set_step 0
     else
       puts "  false" if verbose
-      set_step 3
-    end
-  end
-
-  def jump_if(&block)
-    if block.call
-      @opcode_ptr = arg(1)
-      set_step 0
-    else
       set_step 3
     end
   end
