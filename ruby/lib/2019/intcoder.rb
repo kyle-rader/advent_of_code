@@ -1,5 +1,5 @@
 class Intcoder
-  
+
   def self.get_modes(m)
     modes = []
     loop do
@@ -14,7 +14,7 @@ class Intcoder
 
   attr_reader :opcode_ptr, :step_by, :program, :input, :output,
     :opcode, :arg_mode
-  
+
   def initialize(program)
     @program = program
       .split(",")
@@ -74,26 +74,26 @@ class Intcoder
       raise "Oops, we don't know how to handle opcode '#{opcode}'"
     end
   end
-  
+
   def set_step(n)
-    @step_by = n 
+    @step_by = n
   end
-  
+
   def do_add
     set_val(arg(0) + arg(1))
     set_step 4
   end
-  
+
   def do_mult
     set_val(arg(0) * arg(1))
     set_step 4
   end
-  
+
   def do_input
     @program[program[opcode_ptr + 1]] = input.pop
     set_step 2
   end
-  
+
   def do_output
     @output << program[program[opcode_ptr + 1]]
     set_step 2
