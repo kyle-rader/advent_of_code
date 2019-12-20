@@ -41,10 +41,46 @@ RSpec.describe Intcoder, "#run" do
     it { is_expected.to eq [1101, 100, -1, 4, 99] }
   end
 
-  context "using a program to compare the input to 8" do
-    let(:program) { "3,9,8,9,10,9,4,9,99,-1,8" }
-    let(:input) { [2] }
-    it { is_expected.to eq [0] }
+  describe "opcode 8: equals" do
+    [
+      "3,3,1108,-1,8,3,4,3,99",
+      "3,9,8,9,10,9,4,9,99,-1,8"
+    ].each do |p|
+      context "with program #{p}" do
+        let(:program) { p }
+        context "is equal" do
+          let(:input) { [8] }
+          it { is_expected.to eq [1] }
+        end
+        context "is not equal" do
+          let(:input) { [5] }
+          it { is_expected.to eq [0] }
+        end
+      end
+    end
+  end
+
+  describe "opcode 7: less than" do
+    [
+      "3,3,1107,-1,8,3,4,3,99",
+      "3,9,7,9,10,9,4,9,99,-1,8"
+    ].each do |p|
+      context "with program #{p}" do
+        let(:program) { p }
+        context "is less than" do
+          let(:input) { [5] }
+          it { is_expected.to eq [1] }
+        end
+        context "is not less than" do
+          let(:input) { [24] }
+          it { is_expected.to eq [0] }
+        end
+        context "is equal" do
+          let(:input) { [8] }
+          it { is_expected.to eq [0] }
+        end
+      end
+    end
   end
 end
 
