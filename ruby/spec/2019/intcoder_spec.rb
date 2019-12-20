@@ -41,12 +41,11 @@ RSpec.describe Intcoder, "#run" do
     it { is_expected.to eq [1101, 100, -1, 4, 99] }
   end
 
-  # describe "opcodes 5-8" do
-  #   context "using a program to compare the input to 8" do
-  #     let(:program) { "3,9,8,9,10,9,4,9,99,-1,8" }
-
-  #   end
-  # end
+  context "using a program to compare the input to 8" do
+    let(:program) { "3,9,8,9,10,9,4,9,99,-1,8" }
+    let(:input) { [2] }
+    it { is_expected.to eq [0] }
+  end
 end
 
 RSpec.describe Intcoder, "self.get_modes" do

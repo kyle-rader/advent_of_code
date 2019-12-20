@@ -70,6 +70,8 @@ class Intcoder
       do_input
     when 4
       do_output
+    when 8
+      do_equals
     else
       raise "Oops, we don't know how to handle opcode '#{opcode}'"
     end
@@ -97,6 +99,11 @@ class Intcoder
   def do_output
     @output << program[program[opcode_ptr + 1]]
     set_step 2
+  end
+
+  def do_equals
+    set_val(arg(0) == arg(1) ? 1 : 0)
+    set_step 4
   end
 
   def set_val(val)
