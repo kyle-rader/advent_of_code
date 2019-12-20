@@ -124,6 +124,12 @@ RSpec.describe Intcoder, "#run" do
       it { is_expected.to eq [1001] }
     end
   end
+
+  describe "day 5 part 2" do
+    let(:program) { day5_program }
+    let(:input) { [5] }
+    it { is_expected.to eq [3188550] }
+  end
 end
 
 RSpec.describe Intcoder, "self.get_modes" do
