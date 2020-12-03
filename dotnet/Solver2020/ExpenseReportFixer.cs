@@ -9,6 +9,7 @@ namespace Solver2020
             for (int i = startAt; i < a.Length; i++)
             {
                 int groupSum = a[i] + acc;
+                if (groupSum > targetSum) continue;
 
                 if (remaining == 1)
                 {
