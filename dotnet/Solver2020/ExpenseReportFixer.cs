@@ -14,6 +14,7 @@ namespace Solver2020
                 if (remaining == 1)
                 {
                     if (groupSum == targetSum) return a[i];
+                    else continue;
                 }
 
                 int subGroupProduct = FindSumGroupProduct(a, targetSum, groupSum, i + 1, remaining - 1);
