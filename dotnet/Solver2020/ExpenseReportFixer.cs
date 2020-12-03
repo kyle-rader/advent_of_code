@@ -4,23 +4,30 @@ namespace Solver2020
 {
     class ExpenseReportFixer
     {
-        public static int FindSumPairProduct(int[] a, int sum)
+        public static int FindSumGroupProduct(int[] a, int targetSum, int acc, int startAt, int remaining)
         {
-            int i, j = 0;
-            for (i = 0; i < a.Length; i++)
+            for (int i = startAt; i < a.Length; i++)
             {
-                if (a[i] > sum) continue;
-                for (j = i + 1; j < a.Length; j++)
+                int groupSum = a[i] + acc;
+
+                if (remaining == 1)
                 {
-                    int pairSum = a[i] + a[j];
-                    if (pairSum == sum)
-                    {
-                        return a[i] * a[j];
-                    }
+                    if (groupSum == targetSum) return a[i];
+                }
+
+                int subGroupProduct = FindSumGroupProduct(a, targetSum, groupSum, i + 1, remaining - 1);
+                if (subGroupProduct >= 0)
+                {
+                    return a[i] * subGroupProduct;
                 }
             }
 
-            throw new Exception($"Unable to find pair that sums to {sum}");
+            return -1;
+        }
+
+        public static int FindSumGroupProduct(int[] a, int targetSum, int groupSize)
+        {
+            return FindSumGroupProduct(a, targetSum, 0, 0, groupSize);
         }
     }
 }

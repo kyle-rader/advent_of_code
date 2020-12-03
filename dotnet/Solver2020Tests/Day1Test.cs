@@ -13,19 +13,26 @@ namespace Solver2020Tests
         [SetUp]
         public void Setup()
         {
-            subject = new Day1(fileSystem);
-        }
-
-        [Test]
-        public void Part1Example()
-        {
             SetInput(@"1721
 979
 366
 299
 675
 1456");
+
+            subject = new Day1(fileSystem);
+        }
+
+        [Test]
+        public void Part1Example()
+        {
             int.Parse(subject.Solve(INPUT_FILE)).Should().Be(514579);
+        }
+
+        [Test]
+        public void Part2Example()
+        {
+            int.Parse(subject.Solve2(INPUT_FILE)).Should().Be(241861950);
         }
     }
 }
