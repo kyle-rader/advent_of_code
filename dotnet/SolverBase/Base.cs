@@ -4,7 +4,7 @@ namespace SolverBase
 {
     public abstract class Base : ISolver
     {
-        private readonly IFileSystem fileSystem;
+        protected readonly IFileSystem fileSystem;
 
         public Base(IFileSystem fileSystem)
         {
@@ -12,5 +12,7 @@ namespace SolverBase
         }
 
         public abstract string Solve(string inputFile);
+
+        public abstract string Solve2(string inputFile);
     }
 }
