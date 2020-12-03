@@ -1,0 +1,15 @@
+name: dotnet-tests
+
+on: push
+
+jobs:
+  run-tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+      - run: dotnet test dotnet/aoc.sln
