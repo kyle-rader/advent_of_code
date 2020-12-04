@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 
-using System.Collections.Generic;
+using SolverBase;
+
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 
@@ -11,6 +12,8 @@ namespace Solver2020Tests
         public IFileSystem fileSystem;
 
         public const string INPUT_FILE = "X:\\input.txt";
+
+        public ISolver solver;
 
         [SetUp]
         public void SetupBase()
@@ -23,5 +26,13 @@ namespace Solver2020Tests
         {
             fileSystem.File.WriteAllText(INPUT_FILE, input);
         }
+
+        public string Solve1String() => solver.Solve(INPUT_FILE);
+
+        public int Solve1Int() => int.Parse(Solve1String());
+
+        public string Solve2String() => solver.Solve2(INPUT_FILE);
+
+        public int Solve2Int() => int.Parse(Solve2String());
     }
 }

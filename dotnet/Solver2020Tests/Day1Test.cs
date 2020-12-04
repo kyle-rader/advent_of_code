@@ -8,8 +8,6 @@ namespace Solver2020Tests
 {
     public class Day1Test : TestBase
     {
-        private Day1 subject;
-
         [SetUp]
         public void Setup()
         {
@@ -20,19 +18,19 @@ namespace Solver2020Tests
 675
 1456");
 
-            subject = new Day1(fileSystem);
+            solver = new Day1(fileSystem);
         }
 
         [Test]
         public void Part1Example()
         {
-            int.Parse(subject.Solve(INPUT_FILE)).Should().Be(514579);
+            Solve1Int().Should().Be(514579);
         }
 
         [Test]
         public void Part2Example()
         {
-            int.Parse(subject.Solve2(INPUT_FILE)).Should().Be(241861950);
+            Solve2Int().Should().Be(241861950);
         }
     }
 }
