@@ -22,7 +22,7 @@ namespace SolverBase
                 .ReadAllText(inputFile)
                 .Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-        protected string[] InputItemsStrings(string fileName) => InputItems(fileName).ToArray();
+        protected string[] InputItemsStrings(string inputFile) => InputItems(inputFile).ToArray();
 
         protected int[] InputItemsInts(string inputFile) => InputItems(inputFile)
                 .Select(line => int.Parse(line))
