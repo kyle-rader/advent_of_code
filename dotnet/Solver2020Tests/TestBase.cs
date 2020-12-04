@@ -34,5 +34,7 @@ namespace Solver2020Tests
         public string Solve2String() => solver.Solve2(INPUT_FILE);
 
         public int Solve2Int() => int.Parse(Solve2String());
+
+        public double Solve2Double() => double.Parse(Solve2String());
     }
 }

@@ -20,14 +20,14 @@ namespace Solver2020
         {
             char[][] map = InputItems(inputFile).Select(line => line.ToCharArray()).ToArray();
 
-            return new int[]
+            return new double[]
             {
                 TreesOnPath(map, 1, 1),
                 TreesOnPath(map, 3, 1),
                 TreesOnPath(map, 5, 1),
                 TreesOnPath(map, 7, 1),
                 TreesOnPath(map, 1, 2),
-            }.Aggregate(1, (acc, x) => acc * x).ToString();
+            }.Aggregate(1.0, (acc, x) => acc * x).ToString();
         }
 
         public static int TreesOnPath(char[][] map, int reach, int depth = 1)
