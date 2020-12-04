@@ -1,10 +1,12 @@
 ﻿using SolverBase;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Solver2020
@@ -16,83 +18,58 @@ namespace Solver2020
         public override string Solve(string inputFile)
         {
             var inputRaw = fileSystem.File.ReadAllText(inputFile);
-            var splits = inputRaw.Split(new[] { "\r\n\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+            var splits = inputRaw.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             return splits.Select(data => new Passport(data)).Where(p => p.Valid()).Count().ToString();
         }
 
         public override string Solve2(string inputFile)
         {
             var inputRaw = fileSystem.File.ReadAllText(inputFile);
-            var splits = inputRaw.Split(new[] { "\r\n\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
-            return splits.Select(data => new Passport(data)).Where(p => p.ValidStrict()).Count().ToString();
+            var splits = inputRaw.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            var passports = splits.Select(data => new Passport(data)).ToArray();
+
+            var invalid = passports.Where(p => !p.ValidStrict()).Count();
+            var valid = passports.Where(p => p.ValidStrict()).Count();
+
+            return valid.ToString();
         }
 
         public class Passport
         {
-            static readonly Dictionary<string, Func<string, bool>> ReqFields = new Dictionary<string, Func<string, bool>>()
-            {
-                {"byr", ByrValid },
-                {"iyr", IyrValid },
-                {"eyr", EyrValid },
-                {"hgt", HgtValid },
-                {"hcl", HclValid },
-                {"ecl", EclValid },
-                {"pid" , PidValid },
-                // "cid" optional
-            };
-
-            private static bool PidValid(string arg)
-            {
-                return Regex.IsMatch(arg, "[0-9]{9}");
-            }
-
             private static readonly HashSet<string> EyeColors = new HashSet<string>()
             {
                 "amb", "blu", "brn", "gry", "grn", "hzl", "oth"
             };
 
-            private static bool EclValid(string arg)
+            private static readonly Dictionary<string, Func<string, bool>> ReqFields = new Dictionary<string, Func<string, bool>>()
             {
-                return EyeColors.Contains(arg);
-            }
-
-            private static bool HclValid(string arg)
-            {
-                return Regex.IsMatch(arg, "#([0-9]|[a-f]){6}");
-            }
+                {"byr", (arg) => Within(arg, 1920, 2002) },
+                {"iyr", (arg) => Within(arg, 2010, 2020) },
+                {"eyr", (arg) => Within(arg, 2020, 2030) },
+                {"hgt", HgtValid },
+                {"hcl", (arg) => Regex.IsMatch(arg.ToLower(), "^#([0-9a-f]){6}$") },
+                {"ecl", (arg) => EyeColors.Contains(arg) },
+                {"pid" , (arg) => Regex.IsMatch(arg, "^[0-9]{9}$") },
+            };
 
             private static bool HgtValid(string arg)
             {
-                var match = Regex.Match(arg, "([0-9]+)(cm|in)");
-                if (!match.Success) return false;
-                int.TryParse(match.Groups[1].Value, out int height);
-
-                int min = 59, max = 76;
-
-                if (match.Groups[2].Value == "cm")
+                if (arg.EndsWith("in"))
                 {
-                    min = 150;
-                    max = 193;
+                    return Within(arg.Substring(0, arg.Length - 2), 59, 76);
                 }
-                return height >= min && height <= max;
+                else if (arg.EndsWith("cm"))
+                {
+                    return Within(arg.Substring(0, arg.Length - 2), 150, 193);
+                }
+                else
+                {
+                    return false;
+                }
             }
 
-            private static bool EyrValid(string arg)
-            {
-                return ValidYear(arg, 2020, 2030);
-            }
-
-            private static bool IyrValid(string arg)
-            {
-                return ValidYear(arg, 2010, 2020);
-            }
-
-            private static bool ByrValid(string arg)
-            {
-                return ValidYear(arg, 1920, 2002);
-            }
-
-            private static bool ValidYear(string arg, int min, int max)
+            private static bool Within(string arg, int min, int max)
             {
                 if (int.TryParse(arg, out int expYear))
                     return expYear >= min && expYear <= max;
@@ -105,9 +82,9 @@ namespace Solver2020
             {
                 fields = new Dictionary<string, string>();
 
-                foreach (string pair in input.Split(new[] { "\r\n", " " }, System.StringSplitOptions.RemoveEmptyEntries))
+                foreach (string pair in input.Split(new[] { "\r\n", " " }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    var parts = pair.Split(new[] { ':' }, System.StringSplitOptions.RemoveEmptyEntries);
+                    var parts = pair.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     fields[parts[0]] = parts[1];
                 }
             }
