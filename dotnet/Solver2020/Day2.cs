@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Solver2020
 {
-    public class Day2 : Base, ISolver
+    public class Day2 : Base
     {
         public Day2(IFileSystem fileSystem) : base(fileSystem) { }
 
