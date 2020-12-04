@@ -35,7 +35,7 @@ namespace Solver2020Tests
         [Test]
         public void Part2Example()
         {
-            //Solve2Int().Should().Be(0);
+            Solve2Int().Should().Be(336);
         }
     }
 }
