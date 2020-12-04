@@ -20,7 +20,7 @@ namespace SolverBase
 
         protected IEnumerable<string> InputItems(string inputFile) => fileSystem.File
                 .ReadAllText(inputFile)
-                .Split(new[] { "\n", "\r\n", " " }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
         protected string[] InputItemsStrings(string fileName) => InputItems(fileName).ToArray();
 
