@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
 
 namespace Solver
 {
@@ -30,7 +28,7 @@ namespace Solver
                 filled[0] = filled[1];
                 filled[1] = ids.Contains(i);
             }
-            return (i-1).ToString();
+            return (i - 1).ToString();
         }
 
         public class BoardingPass
