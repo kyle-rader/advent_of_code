@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using System.Linq;
 
 namespace Solver
 {
@@ -9,7 +10,7 @@ namespace Solver
         public override string Solve(string inputFile)
         {
             int sum = 2020;
-            int[] a = InputItemsInts(inputFile);
+            int[] a = InputItemsInts(inputFile).ToArray();
 
             return FindSumGroupProduct(a, sum, 2).ToString();
         }
@@ -17,7 +18,7 @@ namespace Solver
         public override string Solve2(string inputFile)
         {
             int sum = 2020;
-            int[] a = InputItemsInts(inputFile);
+            int[] a = InputItemsInts(inputFile).ToArray();
 
             return FindSumGroupProduct(a, sum, 3).ToString();
         }
