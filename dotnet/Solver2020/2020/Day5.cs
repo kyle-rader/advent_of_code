@@ -20,18 +20,17 @@ namespace Solver
 
         public override string Solve2(string inputFile)
         {
-            var ids = InputItemsStrings(inputFile).Select(x => new BoardingPass(x)).ToDictionary((p) => p.Id);
+            var ids = new HashSet<int>(InputItemsStrings(inputFile).Select(x => new BoardingPass(x).Id));
 
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 128; i++)
+            bool[] filled = new bool[] { ids.Contains(0), ids.Contains(1) };
+            int i;
+            for (i = 2; i < 1023; i++)
             {
-                for (int j = 0; j < 8; j++)
-                {
-                    var id = 8 * i + j;
-                    sb.Append(ids.ContainsKey(id) ? "X" : "O");
-                }
+                if (ids.Contains(i) && !filled[1] && filled[0]) break;
+                filled[0] = filled[1];
+                filled[1] = ids.Contains(i);
             }
-            return (sb.ToString().IndexOf("XOX") + 1).ToString();
+            return (i-1).ToString();
         }
 
         public class BoardingPass
