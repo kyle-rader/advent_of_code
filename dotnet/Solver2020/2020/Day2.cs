@@ -1,11 +1,9 @@
-﻿using SolverBase;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 
-namespace Solver2020
+namespace Solver
 {
     public class Day2 : Base
     {

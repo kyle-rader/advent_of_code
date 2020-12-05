@@ -1,15 +1,10 @@
-﻿using SolverBase;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Solver2020
+namespace Solver
 {
     public class Day4 : Base
     {

@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 
-using SolverBase;
+using Solver;
 
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 
-namespace Solver2020Tests
+namespace Tester
 {
     public class TestBase
     {

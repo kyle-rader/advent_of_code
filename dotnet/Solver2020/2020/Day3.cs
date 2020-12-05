@@ -1,9 +1,7 @@
-﻿using SolverBase;
-
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Linq;
 
-namespace Solver2020
+namespace Solver
 {
     public class Day3 : Base
     {
@@ -34,7 +32,7 @@ namespace Solver2020
         {
             int trees = 0;
             int xMod = map[0].Length;
-            for (int i = 0; i*depth < map.Length; i++)
+            for (int i = 0; i * depth < map.Length; i++)
             {
                 trees += map[i * depth][(i * reach) % xMod] == '#' ? 1 : 0;
             }
