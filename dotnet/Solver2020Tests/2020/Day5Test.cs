@@ -4,6 +4,8 @@ using NUnit.Framework;
 
 using Solver;
 
+using System.Collections.Generic;
+
 namespace Tester
 {
     public class Day5Test : TestBase
@@ -19,16 +21,24 @@ BBFFBBFRLL");
         }
 
         [Test]
-        public void Part1Example()
+        public void Part1FindLargestSeatId()
         {
             Solve1Int().Should().Be(820);
         }
 
         [Test]
-        public void Part2ExampleBadPassports()
+        public void Part2FindYourSeatId()
         {
             SetInput(@"");
             Solve2Int().Should().Be(0);
+        }
+
+        [TestCase(new[] { 0, 1, 4, 6, 200 }, 5)]
+        [TestCase(new[] { 0, 1, 4, 200, 250, 15, 198, 300 }, 199)]
+        [TestCase(new[] { 0, 2 }, 1)]
+        public void FindMissingBoardingPass(IEnumerable<int> ids, int expectedId)
+        {
+            Day5.FindBoardingPass(ids).Should().Be(expectedId);
         }
 
         [TestCase("FBFBBFFRLR", 44, 5, 357)]

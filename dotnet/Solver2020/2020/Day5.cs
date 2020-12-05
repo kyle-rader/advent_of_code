@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 
@@ -17,7 +18,8 @@ namespace Solver
 
         public override string Solve2(string inputFile)
         {
-            return null;
+            var ids = InputItemsStrings(inputFile).Select(x => new BoardingPass(x).Id);
+            return FindBoardingPass(ids).ToString();
         }
 
         public class BoardingPass
@@ -53,6 +55,27 @@ namespace Solver
                 }
                 return input[n - 1] == low ? min : max;
             }
+        }
+
+        public static int FindBoardingPass(IEnumerable<int> ids)
+        {
+            HashSet<int> targets = new HashSet<int>();
+            foreach (int i in ids)
+            {
+                // First check if we have seen something with +/- 1 of this id before.
+                if (targets.Contains(i-1))
+                {
+                    return i - 1;
+                }
+                else if (targets.Contains(i+1))
+                {
+                    return i + 1;
+                }
+
+                targets.Add(i + 1);
+                targets.Add(i - 1);
+            }
+            throw new Exception("Did not find a target id!");
         }
     }
 }
