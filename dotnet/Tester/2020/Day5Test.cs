@@ -877,16 +877,16 @@ FBFFBFBLRL");
         //    Day5.FindBoardingPass(ids).Should().Be(expectedId);
         //}
 
-        [TestCase("FBFBBFFRLR", 44, 5, 357)]
-        [TestCase("BFFFBBFRRR", 70, 7, 567)]
-        [TestCase("FFFBBBFRRR", 14, 7, 119)]
-        [TestCase("BBFFBBFRLL", 102, 4, 820)]
-        [TestCase("FFFFFFFRRR", 0, 7, 7)]
-        [TestCase("FFFFFFFLLL", 0, 0, 0)]
-        public void BoardingPassCanBeParsed(string input, int row, int col, int id)
+        [TestCase("FBFBBFFRLR", 357)]
+        [TestCase("BFFFBBFRRR", 567)]
+        [TestCase("FFFBBBFRRR", 119)]
+        [TestCase("BBFFBBFRLL", 820)]
+        [TestCase("FFFFFFFRRR", 7)]
+        [TestCase("FFFFFFFLLL", 0)]
+        public void BoardingPassCanBeParsed(string input, int id)
         {
-            var subject = new Day5.BoardingPass(input);
-            subject.Id.Should().Be(id);
+            var subject = Day5.BoardingPassId(input);
+            subject.Should().Be(id);
         }
     }
 }
