@@ -11,8 +11,21 @@ namespace Tester._2020
         [SetUp]
         public void Setup()
         {
-            SetInput(@"
-");
+            SetInput(@"abc
+
+a
+b
+c
+
+ab
+ac
+
+a
+a
+a
+a
+
+b");
 
             solver = new Day6(fileSystem);
         }
@@ -20,7 +33,7 @@ namespace Tester._2020
         [Test]
         public void Part1()
         {
-            //Solve1Int().Should().Be(0);
+            Solve1Int().Should().Be(11);
         }
 
         [Test]

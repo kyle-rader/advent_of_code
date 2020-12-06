@@ -13,8 +13,10 @@ namespace Solver._2020
 
         public override string Solve(string inputFile)
         {
-            var input = Input(inputFile);
-            return null;
+            return InputItemsByBlankLines(inputFile).
+                Aggregate(0,
+                          (sum, next) => new HashSet<char>(next.Replace("\r\n", "").ToCharArray()).Count() + sum)
+                .ToString();
         }
 
         public override string Solve2(string inputFile)
