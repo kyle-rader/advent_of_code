@@ -1,9 +1,5 @@
 using System.IO.Abstractions;
-using System;
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Solver._2015
 {
