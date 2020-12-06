@@ -886,8 +886,6 @@ FBFFBFBLRL");
         public void BoardingPassCanBeParsed(string input, int row, int col, int id)
         {
             var subject = new Day5.BoardingPass(input);
-            subject.Row.Should().Be(row);
-            subject.Col.Should().Be(col);
             subject.Id.Should().Be(id);
         }
     }
