@@ -1,7 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
 
-namespace Solver
+namespace Solver._2020
 {
     public class Day3 : Base
     {

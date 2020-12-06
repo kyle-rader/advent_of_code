@@ -2,9 +2,9 @@
 
 using NUnit.Framework;
 
-using Solver;
+using Solver._2020;
 
-namespace Tester
+namespace Tester._2020
 {
     public class Day3Test : TestBase
     {

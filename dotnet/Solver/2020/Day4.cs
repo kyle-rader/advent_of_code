@@ -4,7 +4,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Solver
+namespace Solver._2020
 {
     public class Day4 : Base
     {
