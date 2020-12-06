@@ -1,9 +1,7 @@
 using System.IO.Abstractions;
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Solver._2020
 {
@@ -15,14 +13,28 @@ namespace Solver._2020
         {
             return InputItemsByBlankLines(inputFile).
                 Aggregate(0,
-                          (sum, next) => new HashSet<char>(next.Replace("\r\n", "").ToCharArray()).Count() + sum)
+                          (sum, grp) => new HashSet<char>(grp.Replace("\r\n", "").ToCharArray()).Count() + sum)
                 .ToString();
         }
 
         public override string Solve2(string inputFile)
         {
-            var input = Input(inputFile);
-            return null;
+            return InputItemsByBlankLines(inputFile)
+                .Aggregate(0, (sum, grp) =>
+                    sum + grp
+                            .Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select((p) => new HashSet<char>(p.AsEnumerable()))
+                            .Aggregate(null as HashSet<char>,
+                                       (intersection, person) =>
+                                       {
+                                           if (intersection == null)
+                                               return person;
+                                           else
+                                               intersection.IntersectWith(person);
+                                           return intersection;
+                                       })
+                            .Count())
+                .ToString();
         }
     }
 }

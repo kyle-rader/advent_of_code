@@ -39,7 +39,7 @@ b");
         [Test]
         public void Part2()
         {
-            //Solve2Int().Should().Be(0);
+            Solve2Int().Should().Be(6);
         }
     }
 }
