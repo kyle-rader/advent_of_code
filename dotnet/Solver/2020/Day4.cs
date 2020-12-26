@@ -10,14 +10,17 @@ namespace Solver._2020
     {
         public Day4(IFileSystem fileSystem) : base(fileSystem) { }
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {
             var inputRaw = fileSystem.File.ReadAllText(inputFile);
             var splits = inputRaw.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            return splits.Select(data => new Passport(data)).Where(p => p.Valid()).Count().ToString();
+            return splits
+                .Select(data => new Passport(data))
+                .Where(p => p.Valid())
+                .Count();
         }
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {
             var inputRaw = fileSystem.File.ReadAllText(inputFile);
             var splits = inputRaw.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -27,7 +30,7 @@ namespace Solver._2020
             var invalid = passports.Where(p => !p.ValidStrict()).Count();
             var valid = passports.Where(p => p.ValidStrict()).Count();
 
-            return valid.ToString();
+            return valid;
         }
 
         public class Passport

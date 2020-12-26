@@ -7,14 +7,14 @@ namespace Solver._2020
     {
         public Day3(IFileSystem fileSystem) : base(fileSystem) { }
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {
             char[][] map = InputItems(inputFile).Select(line => line.ToCharArray()).ToArray();
 
-            return TreesOnPath(map, 3).ToString();
+            return TreesOnPath(map, 3);
         }
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {
             char[][] map = InputItems(inputFile).Select(line => line.ToCharArray()).ToArray();
 
@@ -25,7 +25,7 @@ namespace Solver._2020
                 TreesOnPath(map, 5, 1),
                 TreesOnPath(map, 7, 1),
                 TreesOnPath(map, 1, 2),
-            }.Aggregate(1.0, (acc, x) => acc * x).ToString();
+            }.Aggregate(1.0, (acc, x) => acc * x);
         }
 
         public static int TreesOnPath(char[][] map, int reach, int depth = 1)

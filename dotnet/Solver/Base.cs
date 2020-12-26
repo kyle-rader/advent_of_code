@@ -14,9 +14,9 @@ namespace Solver
             this.fileSystem = fileSystem;
         }
 
-        public abstract string Solve(string inputFile);
+        public abstract double Solve(string inputFile);
 
-        public abstract string Solve2(string inputFile);
+        public abstract double Solve2(string inputFile);
 
         public string Input(string inputFile) => fileSystem.File.ReadAllText(inputFile);
 

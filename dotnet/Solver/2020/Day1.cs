@@ -7,20 +7,20 @@ namespace Solver._2020
     {
         public Day1(IFileSystem fileSystem) : base(fileSystem) { }
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {
             int sum = 2020;
             int[] a = InputItemsInts(inputFile).ToArray();
 
-            return FindSumGroupProduct(a, sum, 2).ToString();
+            return FindSumGroupProduct(a, sum, 2);
         }
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {
             int sum = 2020;
             int[] a = InputItemsInts(inputFile).ToArray();
 
-            return FindSumGroupProduct(a, sum, 3).ToString();
+            return FindSumGroupProduct(a, sum, 3);
         }
 
         public static int FindSumGroupProduct(int[] a, int targetSum, int acc, int startAt, int remaining)

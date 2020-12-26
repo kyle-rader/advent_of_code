@@ -11,12 +11,12 @@ namespace Solver._2020
         {
         }
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {
-            return InputItemsStrings(inputFile).Select(x => BoardingPassId(x)).Max().ToString();
+            return InputItemsStrings(inputFile).Select(x => BoardingPassId(x)).Max();
         }
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {
             var ids = new HashSet<int>(InputItemsStrings(inputFile).Select(x => BoardingPassId(x)));
 
@@ -28,7 +28,7 @@ namespace Solver._2020
                 filled[0] = filled[1];
                 filled[1] = ids.Contains(i);
             }
-            return (i - 1).ToString();
+            return i - 1;
         }
 
         public static int BoardingPassId(string input)

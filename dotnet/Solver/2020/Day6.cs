@@ -9,15 +9,14 @@ namespace Solver._2020
     {
         public Day6(IFileSystem fileSystem) : base(fileSystem) { }
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {
             return InputItemsByBlankLines(inputFile).
                 Aggregate(0,
-                          (sum, grp) => new HashSet<char>(grp.Replace("\r\n", "").ToCharArray()).Count() + sum)
-                .ToString();
+                          (sum, grp) => new HashSet<char>(grp.Replace("\r\n", "").ToCharArray()).Count() + sum);
         }
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {
             return InputItemsByBlankLines(inputFile)
                 .Aggregate(0, (sum, grp) =>
@@ -33,8 +32,7 @@ namespace Solver._2020
                                                intersection.IntersectWith(person);
                                            return intersection;
                                        })
-                            .Count())
-                .ToString();
+                            .Count());
         }
     }
 }

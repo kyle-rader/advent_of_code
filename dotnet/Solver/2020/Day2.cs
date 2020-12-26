@@ -9,22 +9,20 @@ namespace Solver._2020
     {
         public Day2(IFileSystem fileSystem) : base(fileSystem) { }
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {
             return InputItems(inputFile)
                 .Select(item => PasswordIsValid1(item))
                 .Where(v => v == true)
-                .Count()
-                .ToString();
+                .Count();
         }
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {
             return InputItems(inputFile)
                 .Select(item => PasswordIsValid2(item))
                 .Where(v => v == true)
-                .Count()
-                .ToString();
+                .Count();
         }
 
         public static bool PasswordIsValid1(string input)

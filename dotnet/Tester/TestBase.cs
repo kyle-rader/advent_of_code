@@ -27,14 +27,12 @@ namespace Tester
             fileSystem.File.WriteAllText(INPUT_FILE, input);
         }
 
-        public string Solve1String() => solver.Solve(INPUT_FILE);
+        public double Solve1Double() => solver.Solve(INPUT_FILE);
 
-        public int Solve1Int() => int.Parse(Solve1String());
+        public int Solve1Int() => (int)solver.Solve(INPUT_FILE);
 
-        public string Solve2String() => solver.Solve2(INPUT_FILE);
+        public double Solve2Double() => solver.Solve2(INPUT_FILE);
 
-        public int Solve2Int() => int.Parse(Solve2String());
-
-        public double Solve2Double() => double.Parse(Solve2String());
+        public int Solve2Int() => (int)solver.Solve2(INPUT_FILE);
     }
 }

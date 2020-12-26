@@ -85,13 +85,13 @@ namespace Solver._{year}
     {{
         public Day{day}(IFileSystem fileSystem) : base(fileSystem) {{ }}
 
-        public override string Solve(string inputFile)
+        public override double Solve(string inputFile)
         {{
             var input = Input(inputFile);
             return null;
         }}
 
-        public override string Solve2(string inputFile)
+        public override double Solve2(string inputFile)
         {{
             var input = Input(inputFile);
             return null;
