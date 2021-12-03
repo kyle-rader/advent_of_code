@@ -15,7 +15,7 @@ namespace Tester._2020
 1-3 b: cdefg
 2-9 c: ccccccccc");
 
-            solver = new Day2(fileSystem);
+            solver = new Day2(fileSystem, INPUT_FILE);
         }
 
         [Test]

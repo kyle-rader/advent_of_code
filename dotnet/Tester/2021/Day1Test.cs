@@ -23,7 +23,7 @@ namespace Tester._2021
 263
 ");
 
-            solver = new Day1(fileSystem);
+            solver = new Day1(fileSystem, INPUT_FILE);
         }
 
         [Test]

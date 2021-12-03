@@ -15,7 +15,7 @@ namespace Tester._2020
 BFFFBBFRRR
 FFFBBBFRRR
 BBFFBBFRLL");
-            solver = new Day5(fileSystem);
+            solver = new Day5(fileSystem, INPUT_FILE);
         }
 
         [Test]

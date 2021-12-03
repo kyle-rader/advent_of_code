@@ -24,7 +24,7 @@ hgt:179cm
 
 hcl:#cfa07d eyr:2025 pid:166559648
 iyr:2011 ecl:brn hgt:59in");
-            solver = new Day4(fileSystem);
+            solver = new Day4(fileSystem, INPUT_FILE);
         }
 
         [Test]

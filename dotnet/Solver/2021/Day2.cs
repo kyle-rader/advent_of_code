@@ -9,7 +9,7 @@ namespace Solver._2021
 {
     public class Day2 : Base
     {
-        public Day2(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day2(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
         private struct Position
         {
@@ -45,9 +45,9 @@ namespace Solver._2021
             }
         }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            var input = InputItems(inputFile);
+            var input = InputLines();
             Position position = new Position();
             foreach (var step in Steps(input))
                 position.Add(step);
@@ -55,9 +55,9 @@ namespace Solver._2021
             return position.Depth * position.PositionHorizontal;
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            var input = InputItems(inputFile);
+            var input = InputLines();
             Position p = new Position();
             foreach (var line in input)
             {

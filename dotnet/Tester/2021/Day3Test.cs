@@ -30,7 +30,7 @@ namespace Tester._2021
         {
             SetInput(Input);
 
-            solver = new Day3(fileSystem);
+            solver = new Day3(fileSystem, INPUT_FILE);
         }
 
         [Test]

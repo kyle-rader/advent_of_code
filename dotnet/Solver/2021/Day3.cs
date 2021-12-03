@@ -9,7 +9,7 @@ namespace Solver._2021
 {
     public class Day3 : Base
     {
-        public Day3(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day3(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
         private int BitsToString(IEnumerable<char> bits)
         {
@@ -34,9 +34,9 @@ namespace Solver._2021
             return bitCounts;
         }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            var input = InputItems(inputFile);
+            var input = InputLines();
             int mid = input.Count() / 2;
             int[] bitCounts = OnesPositionalBitCount(input);
 
@@ -45,9 +45,9 @@ namespace Solver._2021
             return gamma * epsilon;
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            var input = InputItems(inputFile).ToList();
+            var input = InputLines().ToList();
             int co2GeneratorRating = Co2GeneratorRating(input);
             int co2ScrubberRating = Co2ScrubberRating(input);
             return co2GeneratorRating * co2ScrubberRating;

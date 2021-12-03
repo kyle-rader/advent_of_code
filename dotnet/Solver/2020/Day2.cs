@@ -7,19 +7,19 @@ namespace Solver._2020
 {
     public class Day2 : Base
     {
-        public Day2(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day2(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            return InputItems(inputFile)
+            return InputLines()
                 .Select(item => PasswordIsValid1(item))
                 .Where(v => v == true)
                 .Count();
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            return InputItems(inputFile)
+            return InputLines()
                 .Select(item => PasswordIsValid2(item))
                 .Where(v => v == true)
                 .Count();

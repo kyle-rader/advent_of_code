@@ -83,17 +83,17 @@ namespace Solver._{year}
 {{
     public class Day{day} : Base
     {{
-        public Day{day}(IFileSystem fileSystem) : base(fileSystem) {{ }}
+        public Day{day}(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) {{ }}
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {{
-            var input = Input(inputFile);
+            var input = InputLines();
             return -1;
         }}
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {{
-            var input = Input(inputFile);
+            var input = InputLines();
             return -1;
         }}
     }}
@@ -116,7 +116,7 @@ namespace Tester._{year}
             SetInput(@""
 "");
 
-            solver = new Day{day}(fileSystem);
+            solver = new Day{day}(fileSystem, INPUT_FILE);
         }}
 
         [Test]

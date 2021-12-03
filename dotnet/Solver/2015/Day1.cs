@@ -5,11 +5,11 @@ namespace Solver._2015
 {
     public class Day1 : Base
     {
-        public Day1(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day1(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            return Input(inputFile)
+            return Input
                 .ToCharArray()
                 .Aggregate(
                     0,
@@ -17,10 +17,10 @@ namespace Solver._2015
                     (final) => final);
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
             int floor = 0, i = 1;
-            foreach (var c in Input(inputFile).ToCharArray())
+            foreach (var c in Input.ToCharArray())
             {
                 floor += c == '(' ? 1 : -1;
                 if (floor < 0) break;

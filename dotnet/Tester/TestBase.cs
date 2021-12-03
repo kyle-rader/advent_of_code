@@ -15,6 +15,8 @@ namespace Tester
 
         public ISolver solver;
 
+        public string InputString;
+
         [SetUp]
         public void SetupBase()
         {
@@ -25,14 +27,15 @@ namespace Tester
         public void SetInput(string input)
         {
             fileSystem.File.WriteAllText(INPUT_FILE, input);
+            this.InputString = input;
         }
 
-        public double Solve1Double() => solver.Solve(INPUT_FILE);
+        public double Solve1Double() => solver.Solve();
 
-        public int Solve1Int() => (int)solver.Solve(INPUT_FILE);
+        public int Solve1Int() => (int)solver.Solve();
 
-        public double Solve2Double() => solver.Solve2(INPUT_FILE);
+        public double Solve2Double() => solver.Solve2();
 
-        public int Solve2Int() => (int)solver.Solve2(INPUT_FILE);
+        public int Solve2Int() => (int)solver.Solve2();
     }
 }

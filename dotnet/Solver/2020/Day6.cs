@@ -7,18 +7,18 @@ namespace Solver._2020
 {
     public class Day6 : Base
     {
-        public Day6(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day6(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            return InputItemsByBlankLines(inputFile).
+            return InputLinesByBlankLines().
                 Aggregate(0,
                           (sum, grp) => new HashSet<char>(grp.Replace("\r\n", "").ToCharArray()).Count() + sum);
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            return InputItemsByBlankLines(inputFile)
+            return InputLinesByBlankLines()
                 .Aggregate(0, (sum, grp) =>
                     sum + grp
                             .Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries)

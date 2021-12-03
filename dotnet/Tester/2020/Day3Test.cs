@@ -23,7 +23,7 @@ namespace Tester._2020
 #...##....#
 .#..#...#.#");
 
-            solver = new Day3(fileSystem);
+            solver = new Day3(fileSystem, INPUT_FILE);
         }
 
         [Test]

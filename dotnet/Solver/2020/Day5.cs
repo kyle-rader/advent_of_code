@@ -7,18 +7,16 @@ namespace Solver._2020
 {
     public class Day5 : Base
     {
-        public Day5(IFileSystem fileSystem) : base(fileSystem)
+        public Day5(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
+
+        public override double Solve()
         {
+            return InputLines().Select(x => BoardingPassId(x)).Max();
         }
 
-        public override double Solve(string inputFile)
+        public override double Solve2()
         {
-            return InputItemsStrings(inputFile).Select(x => BoardingPassId(x)).Max();
-        }
-
-        public override double Solve2(string inputFile)
-        {
-            var ids = new HashSet<int>(InputItemsStrings(inputFile).Select(x => BoardingPassId(x)));
+            var ids = new HashSet<int>(InputLines().Select(x => BoardingPassId(x)));
 
             bool[] filled = new bool[] { ids.Contains(0), ids.Contains(1) };
             int i;

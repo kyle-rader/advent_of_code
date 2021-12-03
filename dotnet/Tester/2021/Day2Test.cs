@@ -19,7 +19,7 @@ down 8
 forward 2
 ");
 
-            solver = new Day2(fileSystem);
+            solver = new Day2(fileSystem, INPUT_FILE);
         }
 
         [Test]

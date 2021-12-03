@@ -5,20 +5,20 @@ namespace Solver._2020
 {
     public class Day1 : Base
     {
-        public Day1(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day1(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
             int sum = 2020;
-            int[] a = InputItemsInts(inputFile).ToArray();
+            int[] a = InputInts().ToArray();
 
             return FindSumGroupProduct(a, sum, 2);
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
             int sum = 2020;
-            int[] a = InputItemsInts(inputFile).ToArray();
+            int[] a = InputInts().ToArray();
 
             return FindSumGroupProduct(a, sum, 3);
         }

@@ -8,24 +8,19 @@ namespace Solver._2020
 {
     public class Day4 : Base
     {
-        public Day4(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day4(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            var inputRaw = fileSystem.File.ReadAllText(inputFile);
-            var splits = inputRaw.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            return splits
+            return InputLinesByBlankLines()
                 .Select(data => new Passport(data))
                 .Where(p => p.Valid())
                 .Count();
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            var inputRaw = fileSystem.File.ReadAllText(inputFile);
-            var splits = inputRaw.Split(new[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            var passports = splits.Select(data => new Passport(data)).ToArray();
+            var passports = InputLinesByBlankLines().Select(data => new Passport(data)).ToArray();
 
             var invalid = passports.Where(p => !p.ValidStrict()).Count();
             var valid = passports.Where(p => p.ValidStrict()).Count();

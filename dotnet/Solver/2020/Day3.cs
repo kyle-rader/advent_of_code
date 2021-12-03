@@ -5,18 +5,18 @@ namespace Solver._2020
 {
     public class Day3 : Base
     {
-        public Day3(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day3(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            char[][] map = InputItems(inputFile).Select(line => line.ToCharArray()).ToArray();
+            char[][] map = InputLines().Select(line => line.ToCharArray()).ToArray();
 
             return TreesOnPath(map, 3);
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            char[][] map = InputItems(inputFile).Select(line => line.ToCharArray()).ToArray();
+            char[][] map = InputLines().Select(line => line.ToCharArray()).ToArray();
 
             return new double[]
             {

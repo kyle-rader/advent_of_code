@@ -6,7 +6,7 @@ namespace Solver._2021
 {
     public class Day1 : Base
     {
-        public Day1(IFileSystem fileSystem) : base(fileSystem) { }
+        public Day1(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
         private int CountIncreases(int[] items)
         {
@@ -33,15 +33,15 @@ namespace Solver._2021
             }
         }
 
-        public override double Solve(string inputFile)
+        public override double Solve()
         {
-            int[] depths = InputItemsInts(inputFile).ToArray();
+            int[] depths = InputInts().ToArray();
             return CountIncreases(depths);
         }
 
-        public override double Solve2(string inputFile)
+        public override double Solve2()
         {
-            int[] depths = InputItemsInts(inputFile).ToArray();
+            int[] depths = InputInts().ToArray();
             var sums = SlidingWindowSums(depths, 3);
             return CountIncreases(sums.ToArray());
         }

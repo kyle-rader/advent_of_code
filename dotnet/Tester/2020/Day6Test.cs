@@ -27,7 +27,7 @@ a
 
 b");
 
-            solver = new Day6(fileSystem);
+            solver = new Day6(fileSystem, INPUT_FILE);
         }
 
         [Test]

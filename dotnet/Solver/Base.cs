@@ -7,32 +7,43 @@ namespace Solver
 {
     public abstract class Base : ISolver
     {
-        protected readonly IFileSystem fileSystem;
+        public static readonly string[] NewLines = new[] { "\n", "\r\n" };
+        public static readonly string[] DoubleNewLines = new[] { "\n\n", "\r\n\r\n" };
 
-        public Base(IFileSystem fileSystem)
+        protected readonly IFileSystem fileSystem;
+        private readonly string inputFile;
+
+        public Base(IFileSystem fileSystem, string inputFile)
         {
             this.fileSystem = fileSystem;
+            this.inputFile = inputFile;
         }
 
-        public abstract double Solve(string inputFile);
+        public abstract double Solve();
+        public abstract double Solve2();
 
-        public abstract double Solve2(string inputFile);
+        private string _input;
+        public string Input
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_input))
+                    _input = fileSystem.File.ReadAllText(inputFile);
+                return _input;
+            }
+        }
 
-        public string Input(string inputFile) => fileSystem.File.ReadAllText(inputFile);
+        public IEnumerable<string> InputLinesByBlankLines() => Input.SplitNoEmpties(DoubleNewLines);
+        public IEnumerable<string> InputLines() => Input.SplitNoEmpties(NewLines);
+        public IEnumerable<int> InputInts() => InputLines().Select(int.Parse);
+        public IEnumerable<double> InputDoubles() => InputLines().Select(double.Parse);
+    }
 
-        public IEnumerable<string> InputItemsByBlankLines(string inputFile) 
-            => Input(inputFile)
-            .Split(new[] { "\n\n", "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-        public IEnumerable<string> InputItems(string inputFile)
-            => Input(inputFile)
-                .Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-        public IEnumerable<string> InputItemsStrings(string inputFile)
-            => InputItems(inputFile);
-
-        public IEnumerable<int> InputItemsInts(string inputFile)
-            => InputItems(inputFile)
-                .Select(line => int.Parse(line));
+    public static class StringExtensions
+    {
+        public static IEnumerable<string> SplitNoEmpties(this string self, string[] delimiters)
+        {
+            return self.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        }
     }
 }

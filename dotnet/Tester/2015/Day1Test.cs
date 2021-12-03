@@ -14,7 +14,7 @@ namespace Tester._2015
             SetInput(@"
 ");
 
-            solver = new Day1(fileSystem);
+            solver = new Day1(fileSystem, INPUT_FILE);
         }
 
         [TestCase("(())", 0)]

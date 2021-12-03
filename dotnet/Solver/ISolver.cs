@@ -2,8 +2,8 @@
 {
     public interface ISolver
     {
-        double Solve(string inputFile);
+        double Solve();
 
-        double Solve2(string inputFile);
+        double Solve2();
     }
 }
