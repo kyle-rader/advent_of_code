@@ -20,18 +20,18 @@ namespace Solver
 
         public string Input(string inputFile) => fileSystem.File.ReadAllText(inputFile);
 
-        protected IEnumerable<string> InputItemsByBlankLines(string inputFile) 
+        public IEnumerable<string> InputItemsByBlankLines(string inputFile) 
             => Input(inputFile)
             .Split(new[] { "\n\n", "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-        protected IEnumerable<string> InputItems(string inputFile)
+        public IEnumerable<string> InputItems(string inputFile)
             => Input(inputFile)
                 .Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-        protected IEnumerable<string> InputItemsStrings(string inputFile)
+        public IEnumerable<string> InputItemsStrings(string inputFile)
             => InputItems(inputFile);
 
-        protected IEnumerable<int> InputItemsInts(string inputFile)
+        public IEnumerable<int> InputItemsInts(string inputFile)
             => InputItems(inputFile)
                 .Select(line => int.Parse(line));
     }
