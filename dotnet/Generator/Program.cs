@@ -122,13 +122,13 @@ namespace Tester._{year}
         [Test]
         public void Part1()
         {{
-            //Solve1Int().Should().Be(0);
+            Solve1Int().Should().Be(0);
         }}
 
         [Test]
         public void Part2()
         {{
-            //Solve2Int().Should().Be(0);
+            Solve2Int().Should().Be(0);
         }}
     }}
 }}
