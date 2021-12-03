@@ -88,13 +88,13 @@ namespace Solver._{year}
         public override double Solve(string inputFile)
         {{
             var input = Input(inputFile);
-            return null;
+            return -1;
         }}
 
         public override double Solve2(string inputFile)
         {{
             var input = Input(inputFile);
-            return null;
+            return -1;
         }}
     }}
 }}
