@@ -19,12 +19,17 @@ namespace Solver._2021
             return increases;
         }
 
-        private IEnumerable<int> SlidingWindowSums(int[] depths)
+        private IEnumerable<int> SlidingWindowSums(int[] depths, int windowSize)
         {
             int n = depths.Length - 2;
             for (int i = 0; i < n; i++)
             {
-                yield return depths[i] + depths[i + 1] + depths[i + 2];
+                int windowSum = 0;
+                for(int j = 0; j < windowSize; j++)
+                {
+                    windowSum += depths[i + j];
+                }
+                yield return windowSum;
             }
         }
 
@@ -37,7 +42,7 @@ namespace Solver._2021
         public override double Solve2(string inputFile)
         {
             int[] depths = InputItemsInts(inputFile).ToArray();
-            var sums = SlidingWindowSums(depths);
+            var sums = SlidingWindowSums(depths, 3);
             return CountIncreases(sums.ToArray());
         }
     }

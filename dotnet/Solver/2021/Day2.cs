@@ -62,20 +62,30 @@ namespace Solver._2021
             foreach (var line in input)
             {
                 var parts = line.Split();
+                if (parts == null || parts.Length != 2)
+                {
+                    throw new ArgumentException($"Unparsable command! '{line}'");
+                }
+
                 int value = int.Parse(parts[1]);
                 if (parts[0] == "forward")
                 {
                     p.PositionHorizontal += value;
                     p.Depth += p.Aim * value;
                 }
-                if (parts[0] == "up")
+                else if (parts[0] == "up")
                 {
                     p.Aim -= value;
                 }
-                if (parts[0] == "down")
+                else if (parts[0] == "down")
                 {
                     p.Aim += value;
                 }
+                else
+                {
+                    throw new ArgumentException($"unkown command {parts[0]}");
+                }
+
             }
             return p.Depth * p.PositionHorizontal;
         }
