@@ -34,7 +34,7 @@ namespace Solver
         }
 
         public IEnumerable<string> InputLinesByBlankLines() => Input.SplitNoEmpties(DoubleNewLines);
-        public IEnumerable<string> InputLines() => Input.SplitNoEmpties(NewLines);
+        public IEnumerable<string> InputLines() => Input.SplitLines();
         public IEnumerable<int> InputInts() => InputLines().Select(int.Parse);
         public IEnumerable<double> InputDoubles() => InputLines().Select(double.Parse);
     }
@@ -44,6 +44,11 @@ namespace Solver
         public static IEnumerable<string> SplitNoEmpties(this string self, string[] delimiters)
         {
             return self.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        public static IEnumerable<string> SplitLines(this string self)
+        {
+            return self.SplitNoEmpties(Base.NewLines);
         }
     }
 }
