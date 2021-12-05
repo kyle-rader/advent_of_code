@@ -12,7 +12,6 @@ namespace Solver._2021
     {
         public Day4(IFileSystem fileSystem, string inputFile) : base(fileSystem, inputFile) { }
 
-
         public class BingoBoard
         {
             public int Score;
