@@ -9,6 +9,7 @@ namespace Solver
     {
         public static readonly string[] NewLines = new[] { "\n", "\r\n" };
         public static readonly string[] DoubleNewLines = new[] { "\n\n", "\r\n\r\n" };
+        public static readonly string[] Commas = new[] { "," };
 
         protected readonly IFileSystem fileSystem;
         private readonly string inputFile;
@@ -33,8 +34,9 @@ namespace Solver
             }
         }
 
-        public IEnumerable<string> InputLinesByBlankLines() => Input.SplitNoEmpties(DoubleNewLines);
         public IEnumerable<string> InputLines() => Input.SplitLines();
+        public IEnumerable<string> InputLinesByBlankLines() => Input.SplitNoEmpties(DoubleNewLines);
+        public IEnumerable<string> InputByCommas() => Input.SplitNoEmpties(Commas);
         public IEnumerable<int> InputInts() => InputLines().Select(int.Parse);
         public IEnumerable<double> InputDoubles() => InputLines().Select(double.Parse);
     }
@@ -49,6 +51,14 @@ namespace Solver
         public static IEnumerable<string> SplitLines(this string self)
         {
             return self.SplitNoEmpties(Base.NewLines);
+        }
+    }
+
+    public static class IEnumerableExtensions
+    {
+        public static IEnumerable<int> AsInt(this IEnumerable<string> self)
+        {
+            return self.Select(int.Parse);
         }
     }
 }
