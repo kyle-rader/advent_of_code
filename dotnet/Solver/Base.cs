@@ -60,5 +60,11 @@ namespace Solver
         {
             return self.Select(int.Parse);
         }
+
+        public static double GeometricAverage(this IEnumerable<int> self)
+        {
+            double product = self.Aggregate(1.0, (a, i) => a * i);
+            return Math.Pow(product, (1.0 / self.Count()));
+        }
     }
 }
