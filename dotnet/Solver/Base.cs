@@ -67,4 +67,13 @@ namespace Solver
             return Math.Pow(product, (1.0 / self.Count()));
         }
     }
+
+    public static class IDictionaryExtensions
+    {
+        public static int GetOrZero<T>(this IDictionary<T, int> self, T key)
+        {
+            if (self.TryGetValue(key, out int value)) return value;
+            return 0;
+        }
+    }
 }
