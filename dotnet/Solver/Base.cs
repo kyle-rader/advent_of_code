@@ -52,6 +52,11 @@ namespace Solver
         {
             return self.SplitNoEmpties(Base.NewLines);
         }
+
+        public static HashSet<char> AsSet(this string self)
+        {
+            return new HashSet<char>(self.ToCharArray());
+        }
     }
 
     public static class IEnumerableExtensions
