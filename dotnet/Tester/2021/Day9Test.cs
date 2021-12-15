@@ -11,7 +11,8 @@ namespace Tester._2021
         [SetUp]
         public void Setup()
         {
-            SetInput(@"2199943210
+            SetInput(@"
+2199943210
 3987894921
 9856789892
 8767896789
@@ -30,7 +31,7 @@ namespace Tester._2021
         [Test]
         public void Part2()
         {
-            Solve2Int().Should().Be(0);
+            Solve2Int().Should().Be(1134);
         }
     }
 }

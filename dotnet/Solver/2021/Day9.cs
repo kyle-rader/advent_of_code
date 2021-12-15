@@ -20,34 +20,35 @@ namespace Solver._2021
             List<int[]> map = new List<int[]>();
             foreach (var line in input)
             {
-                map.Add(line.Select(c => (int)c - (int)'0').ToArray());
+                map.Add(line.Select(c => c - '0').ToArray());
             }
 
-            Func<(int y, int x), bool> inBounds = (p) => {
-                return p.y >= 0 && p.y < yMax && p.x >= 0 && p.x < n;
+            Func<(int row, int col), bool> inBounds = (p) => {
+                return p.row >= 0 && p.row < yMax && p.col >= 0 && p.col < n;
             };
 
-            Func<int, int, bool> isLowPoint = (y, x) => {
-                List<int> points = new List<(int y, int x)>() {
-                    (x+1, y+1),
-                    (x+1, y-1),
-                    (x-1, y+1),
-                    (x-1, y-1),
+            Func<int, int, bool> isLowPoint = (row, col) => {
+                List<int> points = new List<(int row, int col)>() {
+                    (row, col+1),
+                    (row, col-1),
+                    (row+1, col),
+                    (row-1, col),
                 }
                 .Where(inBounds)
-                .Select(p => map[p.y][p.x])
+                .Select(p => map[p.row][p.col])
                 .ToList();
 
-                return points.All(val => val < map[y][x]);
+                var current = map[row][col];
+                return points.All(x => current < x);
             };
 
             int sum = 0;
-            for (int y = 0; y < yMax; y++)
+            for (int row = 0; row < yMax; row++)
             {
-                for (int x = 0; x < n; x++)
+                for (int col = 0; col < n; col++)
                 {
-                    if (isLowPoint(x, y)) {
-                        sum += map[y][x] + 1;
+                    if (isLowPoint(row, col)) {
+                        sum += map[row][col] + 1;
                     }
                 }
             }
@@ -58,7 +59,76 @@ namespace Solver._2021
         public override double Solve2()
         {
             var input = InputLines();
-            return -1;
+            var yMax = input.Count();
+            var n = input.First().Length;
+            List<int[]> map = new List<int[]>();
+            foreach (var line in input)
+            {
+                map.Add(line.Select(c => c - '0').ToArray());
+            }
+
+            Func<(int row, int col), bool> inBounds = (p) => {
+                return p.row >= 0 && p.row < yMax && p.col >= 0 && p.col < n;
+            };
+
+            Func<int, int, bool> isLowPoint = (row, col) => {
+                List<int> points = new List<(int row, int col)>() {
+                    (row, col+1),
+                    (row, col-1),
+                    (row+1, col),
+                    (row-1, col),
+                }
+                .Where(inBounds)
+                .Select(p => map[p.row][p.col])
+                .ToList();
+
+                var current = map[row][col];
+                return points.All(x => current < x);
+            };
+
+            Func<int, int, int> basinSize = (row, col) =>
+            {
+                int size = 0;
+                var q = new Queue<(int row, int col)>();
+                var seen = new HashSet<(int row, int col)>();
+
+                q.Enqueue((row, col));
+
+                while (q.Count > 0)
+                {
+                    var p = q.Dequeue();
+                    if (!inBounds(p)) continue;
+                    if (map[p.row][p.col] >= 9) continue;
+                    if (seen.Contains(p)) continue;
+
+                    seen.Add(p);
+
+                    // This point is in the basin
+                    size++;
+                    // continue the search
+                    q.Enqueue((p.row, p.col - 1));
+                    q.Enqueue((p.row, p.col + 1));
+                    q.Enqueue((p.row + 1, p.col));
+                    q.Enqueue((p.row - 1, p.col));
+                }
+                return size;
+            };
+
+            List<int> basins = new List<int>();
+            for (int row = 0; row < yMax; row++)
+            {
+                for (int col = 0; col < n; col++)
+                {
+                    if (isLowPoint(row, col))
+                    {
+                        basins.Add(basinSize(row, col));
+                    }
+                }
+            }
+
+            basins.Sort();
+            basins.Reverse();
+            return basins[0] * basins[1] * basins[2];
         }
     }
 }
