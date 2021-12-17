@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Solver\Solver.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="2021\" />
-  </ItemGroup>
-
 </Project>
