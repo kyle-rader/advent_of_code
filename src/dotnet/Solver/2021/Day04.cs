@@ -37,7 +37,7 @@ namespace Solver._2021
                     var row = lines[i]
                         .SplitNoEmpties(new[] { " " })
                         .Select(int.Parse).ToList();
-                    
+
                     if (n != row.Count)
                         throw new ArgumentException($"Row has unexpected count of items! n = {n} but row has {row.Count} items.");
 
@@ -101,7 +101,7 @@ namespace Solver._2021
 
                     if (boards[i].Call(number))
                     {
-                        if (winningBoards.Count >= boards.Count-1)
+                        if (winningBoards.Count >= boards.Count - 1)
                         {
                             // found last winning board
                             return boards[i].Score;

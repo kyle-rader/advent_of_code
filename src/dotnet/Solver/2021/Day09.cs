@@ -23,11 +23,13 @@ namespace Solver._2021
                 map.Add(line.Select(c => c - '0').ToArray());
             }
 
-            Func<(int row, int col), bool> inBounds = (p) => {
+            Func<(int row, int col), bool> inBounds = (p) =>
+            {
                 return p.row >= 0 && p.row < yMax && p.col >= 0 && p.col < n;
             };
 
-            Func<int, int, bool> isLowPoint = (row, col) => {
+            Func<int, int, bool> isLowPoint = (row, col) =>
+            {
                 List<int> points = new List<(int row, int col)>() {
                     (row, col+1),
                     (row, col-1),
@@ -47,7 +49,8 @@ namespace Solver._2021
             {
                 for (int col = 0; col < n; col++)
                 {
-                    if (isLowPoint(row, col)) {
+                    if (isLowPoint(row, col))
+                    {
                         sum += map[row][col] + 1;
                     }
                 }
@@ -67,11 +70,13 @@ namespace Solver._2021
                 map.Add(line.Select(c => c - '0').ToArray());
             }
 
-            Func<(int row, int col), bool> inBounds = (p) => {
+            Func<(int row, int col), bool> inBounds = (p) =>
+            {
                 return p.row >= 0 && p.row < yMax && p.col >= 0 && p.col < n;
             };
 
-            Func<int, int, bool> isLowPoint = (row, col) => {
+            Func<int, int, bool> isLowPoint = (row, col) =>
+            {
                 List<int> points = new List<(int row, int col)>() {
                     (row, col+1),
                     (row, col-1),

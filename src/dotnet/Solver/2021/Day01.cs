@@ -25,7 +25,7 @@ namespace Solver._2021
             for (int i = 0; i < n; i++)
             {
                 int windowSum = 0;
-                for(int j = 0; j < windowSize; j++)
+                for (int j = 0; j < windowSize; j++)
                 {
                     windowSum += depths[i + j];
                 }

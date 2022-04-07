@@ -105,7 +105,7 @@ namespace Solver._2021
                 yield return (x, y);
             }
 
-            private int Min(int a, int b) => a <= b? a : b;
+            private int Min(int a, int b) => a <= b ? a : b;
             private int Max(int a, int b) => a >= b ? a : b;
         }
     }

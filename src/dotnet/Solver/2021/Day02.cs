@@ -26,7 +26,7 @@ namespace Solver._2021
 
         private IEnumerable<Position> Steps(IEnumerable<string> stepsRaw)
         {
-            foreach(var line in stepsRaw)
+            foreach (var line in stepsRaw)
             {
                 var parts = line.Split();
                 int value = int.Parse(parts[1]);

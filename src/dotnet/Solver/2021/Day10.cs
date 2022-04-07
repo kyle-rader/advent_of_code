@@ -80,7 +80,8 @@ namespace Solver._2021
                     }
                     else if (isClosing && stack.Count == 0)
                     {
-                        return new ParseResult() {
+                        return new ParseResult()
+                        {
                             state = ParseResultState.Corrupt,
                             ScoreCorrupt = PointsCorrupt[c],
                         };
