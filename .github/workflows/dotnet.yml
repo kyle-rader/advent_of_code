@@ -1,6 +1,10 @@
-name: dotnet-tests
+name: test-dotnet
 
-on: push
+on:
+  push:
+    paths:
+      - '**.cs'
+      - '**.csproj'
 
 jobs:
   run-tests:
@@ -11,5 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.x'
-      - run: dotnet test dotnet
+          dotnet-version: '6.0.x'
+      - run: |
+        cd src/dotnet/
+        dotnet test
