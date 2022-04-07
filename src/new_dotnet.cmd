@@ -1,2 +1,2 @@
 @ECHO OFF
-dotnet run -p dotnet\Generator\Generator.csproj -- %*
+dotnet run --project dotnet\Generator\Generator.csproj -- %*
