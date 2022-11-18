@@ -7,6 +7,10 @@ name = "common"
 version = "0.1.0"
 
 [[package]]
+name = "gen"
+version = "0.1.0"
+
+[[package]]
 name = "y2015"
 version = "0.1.0"
 dependencies = [
