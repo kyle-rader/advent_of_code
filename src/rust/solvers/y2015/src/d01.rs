@@ -1,3 +1,5 @@
+use common::banana;
+
 fn part1(input: &str) -> i32 {
     input.chars().fold(0, |acc, x| match x {
         '(' => acc + 1,
@@ -25,6 +27,11 @@ fn part2(input: &str) -> Option<usize> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn we_have_bananas() {
+        assert_eq!(banana(), Some(true));
+    }
 
     #[test]
     fn part1_works() {
