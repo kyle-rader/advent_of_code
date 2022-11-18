@@ -11,12 +11,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part1() {
+    fn part1_works() {
         assert_eq!(part1("foobar"), 0);
     }
 
     #[test]
-    fn test_part2() {
+    fn part2_works() {
         assert_eq!(part2("foobar"), 0);
     }
 }

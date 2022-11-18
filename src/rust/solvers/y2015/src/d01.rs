@@ -1,4 +1,4 @@
-fn level(input: &str) -> i32 {
+fn part1(input: &str) -> i32 {
     input.chars().fold(0, |acc, x| match x {
         '(' => acc + 1,
         ')' => acc - 1,
@@ -6,7 +6,7 @@ fn level(input: &str) -> i32 {
     })
 }
 
-fn first_step_into_basement(input: &str) -> Option<usize> {
+fn part2(input: &str) -> Option<usize> {
     let mut floor = 0;
     for (i, c) in input.chars().enumerate() {
         match c {
@@ -27,18 +27,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn floor_level() {
-        assert_eq!(level("(()(()("), 3);
+    fn part1_works() {
+        assert_eq!(part1("(()(()("), 3);
     }
 
     #[test]
-    fn find_basement() {
-        assert_eq!(first_step_into_basement("()())"), Some(5));
-    }
-
-    #[test]
-    fn never_find_basement() {
-        assert_eq!(first_step_into_basement("()()"), None);
-        assert_eq!(first_step_into_basement("()()("), None);
+    fn part2_works() {
+        assert_eq!(part2("()())"), Some(5));
     }
 }

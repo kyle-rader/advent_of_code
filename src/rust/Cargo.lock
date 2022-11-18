@@ -3,5 +3,9 @@
 version = 3
 
 [[package]]
-name = "aoc_rust"
+name = "y2015"
+version = "0.1.0"
+
+[[package]]
+name = "y2016"
 version = "0.1.0"
