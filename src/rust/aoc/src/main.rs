@@ -1,3 +1,6 @@
+mod gen;
+mod login;
+use anyhow::Result;
 use clap::Parser;
 
 #[derive(Debug, Parser, Clone)]
@@ -9,17 +12,10 @@ enum Cli {
     Generate { year: usize, day: usize },
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Cli::parse();
     match args {
-        Cli::Login { token } => {
-            println!(
-                "Login with token: {}",
-                token.unwrap_or_else(|| String::from("<not given>"))
-            );
-        }
-        Cli::Generate { year, day } => {
-            println!("Generate year {year} day {day}");
-        }
+        Cli::Login { token } => login::login(token),
+        Cli::Generate { year, day } => gen::new(year, day),
     }
 }
