@@ -1,3 +1,4 @@
+mod cookies;
 mod gen;
 mod login;
 use anyhow::Result;
