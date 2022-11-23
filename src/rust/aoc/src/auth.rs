@@ -11,7 +11,7 @@ pub fn login(token: Option<String>) -> anyhow::Result<()> {
     // Get
     let token = match token {
         Some(token) => {
-            println!("📝Using token provided on CLI");
+            println!("📝 Using token provided on CLI");
             token
         }
         None => {
@@ -31,6 +31,34 @@ pub fn login(token: Option<String>) -> anyhow::Result<()> {
 
     println!("🚀 Welcome, {user_name}! Happy solving 🎉");
     Ok(())
+}
+
+pub fn logout() -> anyhow::Result<()> {
+    let cache_file = cache_file()?;
+    if cache_file.exists() {
+        fs::remove_file(cache_file)?;
+        println!("🗑️ token cache removed");
+    } else {
+        println!("🔎 no token cache found");
+    }
+
+    Ok(())
+}
+
+pub fn get_token() -> anyhow::Result<String> {
+    let cache_file = cache_file()?;
+
+    if !cache_file.exists() {
+        println!("⚠️ Attempting to auto login");
+        login(None)?
+    }
+
+    match fs::read_to_string(&cache_file) {
+        Ok(token) => Ok(token),
+        Err(err) => Err(anyhow!(
+            "{err}\n❌ Unable to read token. (Make sure you have run the `login` command)"
+        )),
+    }
 }
 
 fn save_token(token: &String) -> anyhow::Result<PathBuf> {
