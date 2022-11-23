@@ -21,11 +21,13 @@ impl<'a> AocClient<'a> {
         let doc = Html::parse_fragment(resp.as_str());
         let user_selector = Selector::parse("div.user").expect("bad selector");
 
-        Ok(doc
-            .select(&user_selector)
+        doc.select(&user_selector)
             .next()
             .ok_or_else(|| anyhow!("It doesn't look like that token worked 🤔"))?
-            .inner_html())
+            .text()
+            .next()
+            .map(|text| text.trim().to_string())
+            .ok_or_else(|| anyhow!("Could not find username in html output!"))
     }
 
     pub fn input(&self, year: usize, day: usize) -> anyhow::Result<String> {
