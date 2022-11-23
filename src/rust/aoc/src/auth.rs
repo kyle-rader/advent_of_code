@@ -56,7 +56,7 @@ pub fn get_token() -> anyhow::Result<String> {
     match fs::read_to_string(&cache_file) {
         Ok(token) => Ok(token),
         Err(err) => Err(anyhow!(
-            "{err}\n❌ Unable to read token. (Make sure you have run the `login` command)"
+            "❌ {err}\nUnable to read token. (Make sure you have run the `login` command)"
         )),
     }
 }
