@@ -1,5 +1,5 @@
 use anyhow::Result;
-use aoc::{gen, login};
+use aoc::{auth, gen};
 use clap::Parser;
 
 #[derive(Debug, Parser, Clone)]
@@ -14,7 +14,7 @@ enum Cli {
 fn main() -> Result<()> {
     let args = Cli::parse();
     match args {
-        Cli::Login { token } => login::login(token),
+        Cli::Login { token } => auth::login(token),
         Cli::Gen { year, day } => gen::new(year, day),
     }
 }

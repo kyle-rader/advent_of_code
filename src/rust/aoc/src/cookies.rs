@@ -16,14 +16,20 @@ fn firefox_profiles_dir() -> anyhow::Result<PathBuf> {
 }
 
 pub fn firefox_cookies_paths() -> anyhow::Result<Vec<PathBuf>> {
-    Ok(firefox_profiles_dir()?
+    let paths: Vec<PathBuf> = firefox_profiles_dir()?
         .read_dir()?
         .filter_map(|p| {
             let Ok(p) = p else { return None };
             let cookie_file = p.path().join(PathBuf::from("cookies.sqlite"));
             cookie_file.exists().then_some(cookie_file)
         })
-        .collect())
+        .collect();
+
+    if paths.is_empty() {
+        Err(anyhow!("No cookie database paths found!"))
+    } else {
+        Ok(paths)
+    }
 }
 
 pub fn aoc_session_token(cookie_file: &Path) -> anyhow::Result<String> {
@@ -36,4 +42,8 @@ pub fn aoc_session_token(cookie_file: &Path) -> anyhow::Result<String> {
         Ok(token) => Ok(token),
         Err(_) => Err(anyhow!("No token found")),
     }
+}
+
+pub fn aoc_session_token_first() -> anyhow::Result<String> {
+    aoc_session_token(&firefox_cookies_paths()?[0])
 }
