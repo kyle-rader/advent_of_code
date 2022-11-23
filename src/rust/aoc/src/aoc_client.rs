@@ -32,6 +32,10 @@ impl<'a> AocClient<'a> {
         self.get(format!("{AOC_URL}/{year}/day/{day}/input"))
     }
 
+    pub fn problem(&self, year: usize, day: usize) -> anyhow::Result<String> {
+        self.get(format!("{AOC_URL}/{year}/day/{day}"))
+    }
+
     fn get<U>(&self, url: U) -> anyhow::Result<String>
     where
         U: IntoUrl,

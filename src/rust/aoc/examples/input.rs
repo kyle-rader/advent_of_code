@@ -7,6 +7,11 @@ fn main() {
     let year = 2015;
     let day = 1;
 
+    match client.problem(year, day) {
+        Ok(problem) => println!("Got problem:\n{problem}"),
+        Err(e) => println!("Error: {e}"),
+    }
+
     match client.input(year, day) {
         Ok(input) => println!("Got input:\n{input}"),
         Err(e) => println!("Error: {e}"),
