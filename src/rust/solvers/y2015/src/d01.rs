@@ -29,11 +29,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn we_have_bananas() {
-        assert_eq!(banana(), Some(true));
-    }
-
-    #[test]
     fn part1_works() {
         assert_eq!(part1("(()(()("), 3);
     }
