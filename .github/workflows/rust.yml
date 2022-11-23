@@ -20,4 +20,4 @@ jobs:
         with:
           toolchain: stable
       - name: cargo test
-        run: cargo test --verbose
+        run: cd src/rust/ & cargo test --verbose
