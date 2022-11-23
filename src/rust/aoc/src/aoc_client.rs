@@ -2,13 +2,13 @@ use anyhow::anyhow;
 use reqwest::blocking::Client;
 use scraper::{Html, Selector};
 
-pub struct AocClient {
-    token: String,
+pub struct AocClient<'a> {
+    token: &'a String,
     client: Client,
 }
 
-impl AocClient {
-    pub fn new(token: String) -> Self {
+impl<'a> AocClient<'a> {
+    pub fn new(token: &'a String) -> Self {
         let client = reqwest::blocking::Client::new();
         AocClient { token, client }
     }
