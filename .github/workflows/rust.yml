@@ -1,0 +1,23 @@
+name: test-rust
+
+on:
+  push:
+    paths:
+      - '**.rs'
+      - '**Cargo.toml'
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  run-tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: cargo test
+        run: cargo test --verbose
