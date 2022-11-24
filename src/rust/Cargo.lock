@@ -1916,7 +1916,3 @@ version = "0.1.0"
 dependencies = [
  "common",
 ]
-
-[[package]]
-name = "y2016"
-version = "0.1.0"
