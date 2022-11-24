@@ -23,14 +23,6 @@ impl AocCargoWorkspace {
     }
 }
 
-impl TryFrom<String> for AocCargoWorkspace {
-    type Error = anyhow::Error;
-
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        toml::from_str(value.as_str()).map_err(|e| anyhow!(format!("{e}")))
-    }
-}
-
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Workspace {
     pub members: Vec<String>,
@@ -68,7 +60,7 @@ pub fn workspace_path() -> anyhow::Result<PathBuf> {
         .filter_map(|(dir, file)| {
             if !(file.exists() && file.is_file()) { return None; }
             let Ok(cargo_toml) = std::fs::read_to_string(&file) else { return None; };
-            let Ok(cargo_toml): anyhow::Result<AocCargoWorkspace> = cargo_toml.try_into() else { return None; };
+            let Ok(cargo_toml): Result<AocCargoWorkspace, _> = toml::from_str(cargo_toml.as_str()) else { return None; };
             cargo_toml.is_rust_aoc_workspace().then_some(dir.into())
         })
         .next()
