@@ -2,7 +2,7 @@ use anyhow::anyhow;
 use reqwest::{blocking::Client, IntoUrl};
 use scraper::{Html, Selector};
 
-const AOC_URL: &'static str = "https://adventofcode.com";
+const AOC_URL: &str = "https://adventofcode.com";
 
 pub struct AocClient<'a> {
     token: &'a String,
