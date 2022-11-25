@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::fs;
 use std::fs::File;
+use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -41,7 +42,7 @@ pub fn init() -> anyhow::Result<()> {
 pub fn new(year: usize, day: usize) -> Result<()> {
     let workspace = workspace_path()?;
     println!(
-        "Creating solver for {year} day {day} under {}",
+        "🛠️ Creating solver for {year} day {day} under {}",
         workspace.display()
     );
 
@@ -60,17 +61,22 @@ pub fn new(year: usize, day: usize) -> Result<()> {
 
         eprintln!("Attempting to remove solver project dir");
         fs::remove_dir_all(&solver_dir)?;
+        return Err(e);
     }
 
     // Does this day already exist? (Abort if so)
     if let Err(e) = ensure_day(&solver_dir, year, day) {
-        eprintln!("Failed to generate day {day:02}");
+        eprintln!("Failed to generate day {day:02}.\n{e}");
+        return Err(e);
     }
+
+    println!("✅ Done!");
     Ok(())
 }
 
 fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> {
-    let source = solver_dir.join(SRC).join(format!("{day:02}.rs"));
+    let day_id = format!("d{day:02}");
+    let source = solver_dir.join(SRC).join(format!("{day_id}.rs"));
     let lib = solver_dir.join(SRC).join("lib.rs");
 
     if !source.is_file() {
@@ -85,8 +91,7 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
         };
 
         let content = format!(
-            "
-{input}
+            "{input}
 
 #[allow(dead_code)]
 fn part1(input: &str) -> i32 {{
@@ -117,9 +122,17 @@ mod tests {{
         fs::write(&source, content)?;
 
         // Append day to lib.rs
-        let mut content = fs::read_to_string(&source)?;
-        content += format!("mod d{day:02};");
-        fs::write(&lib, content)?;
+        let current_lib = fs::read_to_string(&lib)?;
+        let mut mods: Vec<&str> = current_lib.lines().collect();
+        let content = format!("mod {day_id};");
+        mods.push(content.as_str());
+
+        if let Err(e) = fs::write(&lib, mods.join("\n")) {
+            return Err(anyhow!(format!(
+                "Error appending mod {day_id}; to {}.\n{e}",
+                lib.display()
+            )));
+        }
     }
     Ok(())
 }
