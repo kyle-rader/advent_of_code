@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 use std::fs;
+use std::fs::File;
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -11,6 +12,7 @@ use serde::Serialize;
 use crate::{aoc_client::AocClient, auth};
 
 const CARGO_TOML: &str = "Cargo.toml";
+const SRC: &str = "src";
 const COMMON: &str = "common";
 const SOLVERS: &str = "solvers";
 const ALL_SOLVERS: &str = "solvers/*";
@@ -37,9 +39,6 @@ pub fn init() -> anyhow::Result<()> {
 }
 
 pub fn new(year: usize, day: usize) -> Result<()> {
-    let token = auth::get_token()?;
-    let _client = AocClient::new(&token);
-
     let workspace = workspace_path()?;
     println!(
         "Creating solver for {year} day {day} under {}",
@@ -64,13 +63,70 @@ pub fn new(year: usize, day: usize) -> Result<()> {
     }
 
     // Does this day already exist? (Abort if so)
-    // todo: Check if day exists
+    if let Err(e) = ensure_day(&solver_dir, year, day) {
+        eprintln!("Failed to generate day {day:02}");
+    }
+    Ok(())
+}
+
+fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> {
+    let source = solver_dir.join(SRC).join(format!("{day:02}.rs"));
+    let lib = solver_dir.join(SRC).join("lib.rs");
+
+    if !source.is_file() {
+        let token = auth::get_token()?;
+        let client = AocClient::new(&token);
+        let input = match client.input(year, day) {
+            Ok(val) => format!("const INPUT: &str = \"{val}\";"),
+            Err(e) => {
+                eprintln!("Warning, could not get problem input. Using placeholder.\n{e}");
+                String::from("const INPUT: &str = \"TBD\";")
+            }
+        };
+
+        let content = format!(
+            "
+{input}
+
+#[allow(dead_code)]
+fn part1(input: &str) -> i32 {{
+    todo!()
+}}
+
+#[allow(dead_code)]
+fn part2(input: &str) -> i32 {{
+    todo!()
+}}
+
+#[cfg(test)]
+mod tests {{
+    use super::*;
+
+    #[test]
+    fn part1_works() {{
+        assert_eq!(part1(INPUT), 42);
+    }}
+
+    #[test]
+    fn part2_works() {{
+        assert_eq!(part2(INPUT), 42);
+    }}
+}}
+"
+        );
+        fs::write(&source, content)?;
+
+        // Append day to lib.rs
+        let mut content = fs::read_to_string(&source)?;
+        content += format!("mod d{day:02};");
+        fs::write(&lib, content)?;
+    }
     Ok(())
 }
 
 fn ensure_solver_project(solver_dir: &Path, year: usize) -> anyhow::Result<()> {
     let cargo = solver_dir.join(CARGO_TOML);
-    if cargo.exists() && cargo.is_file() {
+    if cargo.is_file() {
         return Ok(());
     }
 
@@ -114,7 +170,7 @@ pub fn workspace_path() -> anyhow::Result<PathBuf> {
         .ancestors()
         .map(|dir| (dir, dir.join(CARGO_TOML)))
         .filter_map(|(dir, file)| {
-            if !(file.exists() && file.is_file()) { return None; }
+            if !file.is_file() { return None; }
             let Ok(cargo_toml) = std::fs::read_to_string(&file) else { return None; };
             let Ok(cargo_toml): Result<AocCargoWorkspace, _> = toml::from_str(cargo_toml.as_str()) else { return None; };
             cargo_toml.is_rust_aoc_workspace().then_some(dir.into())
