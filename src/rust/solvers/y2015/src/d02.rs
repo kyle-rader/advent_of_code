@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::HashMap, num::ParseIntError, str::FromStr};
 
 use thiserror::Error;
 
@@ -14,15 +14,13 @@ fn part2(input: &str) -> i32 {
 
 #[derive(Debug, PartialEq, Eq)]
 struct Gift {
-    w: usize,
-    l: usize,
-    h: usize,
+    dims: Vec<u64>,
 }
 
 #[derive(Debug, PartialEq, Eq, Error)]
 enum GiftParseError {
     #[error("Missing a gift dimension")]
-    Missing(String),
+    Missing,
     #[error("Too many dimensions given")]
     Extra,
     #[error(transparent)]
@@ -33,24 +31,19 @@ impl FromStr for Gift {
     type Err = GiftParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut dims = s.split('x');
+        const DIM_SIZE: usize = 3;
+        let mut dims = s
+            .split('x')
+            .map(|s| s.parse::<u64>())
+            .collect::<Result<Vec<u64>, ParseIntError>>()
+            .map_err(GiftParseError::Invalid)?;
 
-        let w: usize = dims
-            .next()
-            .ok_or_else(|| GiftParseError::Missing("w".into()))?
-            .parse()?;
-        let l: usize = dims
-            .next()
-            .ok_or_else(|| GiftParseError::Missing("l".into()))?
-            .parse()?;
-        let h: usize = dims
-            .next()
-            .ok_or_else(|| GiftParseError::Missing("h".into()))?
-            .parse()?;
+        dims.sort();
 
-        match dims.next() {
-            Some(_) => Err(GiftParseError::Extra),
-            None => Ok(Gift { w, l, h }),
+        match dims.len() {
+            DIM_SIZE => Ok(Gift { dims }),
+            n if n > DIM_SIZE => Err(GiftParseError::Extra),
+            _ => Err(GiftParseError::Missing),
         }
     }
 }
@@ -62,16 +55,29 @@ mod tests {
     #[test]
     fn parse_gift() {
         let input = "2x3x5";
-        assert_eq!(Ok(Gift { w: 2, l: 3, h: 5 }), input.parse());
+        assert_eq!(
+            Ok(Gift {
+                dims: vec![2, 3, 5]
+            }),
+            input.parse()
+        );
+    }
+
+    #[test]
+    fn parse_gift_has_sorted_dims() {
+        let input = "8x2x5";
+        assert_eq!(
+            Ok(Gift {
+                dims: vec![2, 5, 8]
+            }),
+            input.parse()
+        );
     }
 
     #[test]
     fn parse_gift_missing_dim() {
         let input = "2x5";
-        assert_eq!(
-            Err(GiftParseError::Missing("h".into())),
-            input.parse::<Gift>()
-        );
+        assert_eq!(Err(GiftParseError::Missing), input.parse::<Gift>());
     }
 
     #[test]
