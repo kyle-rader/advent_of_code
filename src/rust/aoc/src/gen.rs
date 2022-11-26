@@ -1,7 +1,5 @@
 use std::collections::HashSet;
 use std::fs;
-use std::fs::File;
-use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -91,9 +89,7 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
         };
 
         let content = format!(
-            "{input}
-
-#[allow(dead_code)]
+            "#[allow(dead_code)]
 fn part1(input: &str) -> i32 {{
     todo!()
 }}
@@ -117,6 +113,9 @@ mod tests {{
         assert_eq!(part2(INPUT), 42);
     }}
 }}
+
+#[cfg(test)]
+{input}
 "
         );
         fs::write(&source, content)?;
