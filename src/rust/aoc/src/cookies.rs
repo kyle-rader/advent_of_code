@@ -5,12 +5,15 @@ use anyhow::anyhow;
 use rusqlite::Connection;
 
 fn firefox_profiles_dir() -> anyhow::Result<PathBuf> {
+    #[cfg(target_os = "windows")]
+    let profiles = ["Mozilla", "Firefox", "Profiles"];
+    #[cfg(target_os = "macos")]
+    let profiles = ["", "Firefox", "Profiles"];
+
+    let profiles = profiles.iter().collect::<PathBuf>();
+
     match dirs::config_dir() {
-        Some(config) => Ok(config.join(
-            ["Mozilla", "Firefox", "Profiles"]
-                .iter()
-                .collect::<PathBuf>(),
-        )),
+        Some(config) => Ok(config.join(profiles)),
         None => Err(anyhow!("could not get mozilla config path")),
     }
 }
