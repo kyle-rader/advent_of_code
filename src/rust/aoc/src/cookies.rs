@@ -7,7 +7,7 @@ use rusqlite::Connection;
 fn firefox_profiles_dir() -> anyhow::Result<PathBuf> {
     #[cfg(target_os = "windows")]
     let profiles = ["Mozilla", "Firefox", "Profiles"];
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "macos", target_os = "linux"))]
     let profiles = ["", "Firefox", "Profiles"];
 
     let profiles = profiles.iter().collect::<PathBuf>();
