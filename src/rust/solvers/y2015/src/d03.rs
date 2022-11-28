@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash};
+use std::collections::HashMap;
 
 #[allow(dead_code)]
 fn part1(input: &str) -> u64 {
@@ -11,13 +11,13 @@ fn part2(input: &str) -> u64 {
 }
 
 type Houses = HashMap<(i32, i32), u64>;
+
 fn execute_christmas(directions: &str, n: u32) -> Houses {
     let mut houses: Houses = HashMap::new();
     houses.insert((0, 0), 1);
     let mut santas: Vec<Santa> = (0..n).map(|_| Santa::new()).collect();
     for (i, c) in directions.chars().enumerate() {
-        let santa_id = i % (n as usize);
-        let house = santas[santa_id].visit(c);
+        let house = santas[i % (n as usize)].visit(c);
         houses.entry(house).and_modify(|h| *h += 1).or_insert(1);
     }
     houses
