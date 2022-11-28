@@ -1,10 +1,15 @@
-use std::{collections::HashMap, num::ParseIntError, str::FromStr};
+use std::{num::ParseIntError, ops::Rem, str::FromStr};
 
 use thiserror::Error;
 
 #[allow(dead_code)]
-fn part1(input: &str) -> i32 {
-    todo!()
+fn part1(input: &str) -> u64 {
+    input
+        .lines()
+        .map(|l| l.parse::<Gift>())
+        .filter(|g| g.is_ok())
+        .map(|g| g.unwrap().wrapping_paper())
+        .sum()
 }
 
 #[allow(dead_code)]
@@ -15,6 +20,21 @@ fn part2(input: &str) -> i32 {
 #[derive(Debug, PartialEq, Eq)]
 struct Gift {
     dims: Vec<u64>,
+}
+
+impl Gift {
+    fn wrapping_paper(&self) -> u64 {
+        let mut paper = 0;
+        let l = self.dims.len();
+        // Each face's surface area x 2
+        for i in 0..l {
+            let next = (i + 1).rem(l);
+            paper += 2 * self.dims[i] * self.dims[next];
+        }
+        // 1x the smallest face, relying on self.dims being sorted.
+        paper += self.dims[0] * self.dims[1];
+        paper
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Error)]
@@ -95,7 +115,13 @@ mod tests {
         assert_eq!(Err(GiftParseError::Extra), input.parse::<Gift>());
     }
 
-    // #[test]
+    #[test]
+    fn gift_required_wrapping_paper() {
+        let gift: Gift = "2x3x4".parse().unwrap();
+        assert_eq!(gift.wrapping_paper(), 58);
+    }
+
+    #[test]
     fn part1_works() {
         assert_eq!(part1(INPUT), 1586300);
     }
