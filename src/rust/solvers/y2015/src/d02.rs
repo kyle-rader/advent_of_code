@@ -7,14 +7,19 @@ fn part1(input: &str) -> u64 {
     input
         .lines()
         .map(|l| l.parse::<Gift>())
-        .filter(|g| g.is_ok())
-        .map(|g| g.unwrap().wrapping_paper())
+        .map(|g| g.unwrap())
+        .map(|g| g.wrapping_paper())
         .sum()
 }
 
 #[allow(dead_code)]
-fn part2(input: &str) -> i32 {
-    todo!()
+fn part2(input: &str) -> u64 {
+    input
+        .lines()
+        .map(|l| l.parse::<Gift>())
+        .map(|g| g.unwrap())
+        .map(|g| g.ribbon())
+        .sum()
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -34,6 +39,10 @@ impl Gift {
         // 1x the smallest face, relying on self.dims being sorted.
         paper += self.dims[0] * self.dims[1];
         paper
+    }
+
+    fn ribbon(&self) -> u64 {
+        self.dims.iter().product::<u64>() + (2 * self.dims[0] + 2 * self.dims[1])
     }
 }
 
@@ -122,11 +131,17 @@ mod tests {
     }
 
     #[test]
+    fn gift_ribbon() {
+        let gift: Gift = "2x3x4".parse().unwrap();
+        assert_eq!(gift.ribbon(), 34);
+    }
+
+    #[test]
     fn part1_works() {
         assert_eq!(part1(INPUT), 1586300);
     }
 
-    // #[test]
+    #[test]
     fn part2_works() {
         assert_eq!(part2(INPUT), 3737498);
     }
