@@ -27,6 +27,7 @@ dependencies = [
  "clap",
  "directories",
  "dirs",
+ "md-5",
  "reqwest",
  "rusqlite",
  "scraper",
