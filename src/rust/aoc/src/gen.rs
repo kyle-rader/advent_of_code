@@ -40,7 +40,7 @@ pub fn init() -> anyhow::Result<()> {
 pub fn new(year: usize, day: usize) -> Result<()> {
     let workspace = workspace_path()?;
     println!(
-        "🛠️ Creating solver for {year} day {day} under {}",
+        "🛠️  Creating solver for {year} day {day} under {}",
         workspace.display()
     );
 
