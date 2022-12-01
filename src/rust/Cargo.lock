@@ -1973,3 +1973,10 @@ dependencies = [
  "md-5",
  "thiserror",
 ]
+
+[[package]]
+name = "y2022"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
