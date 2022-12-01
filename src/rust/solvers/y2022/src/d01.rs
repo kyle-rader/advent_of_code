@@ -9,7 +9,10 @@ fn part1(input: &str) -> u64 {
 
 #[allow(dead_code)]
 fn part2(input: &str) -> u64 {
-    let mut elfs: Vec<u64> = parse_elves(input).iter().map(|e| e.calories).collect();
+    let mut elfs: Vec<u64> = parse_elves(input)
+        .iter()
+        .map(|e| e.calories)
+        .collect();
     elfs.sort();
     elfs.reverse();
     elfs[0..3].iter().sum()
