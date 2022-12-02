@@ -1978,5 +1978,6 @@ dependencies = [
 name = "y2022"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "common",
 ]
