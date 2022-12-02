@@ -1,34 +1,24 @@
 #[allow(dead_code)]
 fn part1(input: &str) -> u64 {
-    parse_elves(input)
-        .iter()
-        .map(|e| e.calories)
-        .reduce(|acc, c| if c >= acc { c } else { acc })
-        .unwrap()
+    *parse_elves(input).iter().max().unwrap()
 }
 
 #[allow(dead_code)]
 fn part2(input: &str) -> u64 {
-    let mut elfs: Vec<u64> = parse_elves(input).iter().map(|e| e.calories).collect();
-    elfs.sort();
-    elfs.reverse();
-    elfs[0..3].iter().sum()
+    let mut calories: Vec<u64> = parse_elves(input);
+    calories.sort();
+    calories.iter().rev().take(3).sum()
 }
 
-fn parse_elves(input: &str) -> Vec<Elf> {
+fn parse_elves(input: &str) -> Vec<u64> {
     input
         .split_terminator("\n\n")
-        .map(|cals| Elf {
-            calories: cals
-                .split_whitespace()
+        .map(|cals| {
+            cals.split_whitespace()
                 .filter_map(|c| c.parse::<u64>().ok())
-                .sum(),
+                .sum()
         })
         .collect()
-}
-
-struct Elf {
-    calories: u64,
 }
 
 #[cfg(test)]
