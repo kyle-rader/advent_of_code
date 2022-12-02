@@ -89,13 +89,15 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
         };
 
         let content = format!(
-            "#[allow(dead_code)]
-fn part1(input: &str) -> i32 {{
+            "use anyhow::anyhow;
+
+#[allow(dead_code)]
+fn part1(input: &str) -> anyhow::Result<u64> {{
     todo!()
 }}
 
 #[allow(dead_code)]
-fn part2(input: &str) -> i32 {{
+fn part2(input: &str) -> anyhow::Result<u64> {{
     todo!()
 }}
 
@@ -105,12 +107,12 @@ mod tests {{
 
     #[test]
     fn part1_works() {{
-        assert_eq!(part1(INPUT), 42);
+        assert_eq!(part1(INPUT), Ok(42));
     }}
 
     #[test]
     fn part2_works() {{
-        assert_eq!(part2(INPUT), 42);
+        assert_eq!(part2(INPUT), Ok(42));
     }}
 }}
 
