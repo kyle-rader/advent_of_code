@@ -1,4 +1,4 @@
-use std::{collections::HashSet, hash::Hash};
+use std::collections::HashSet;
 
 #[allow(dead_code)]
 fn part1(input: &str) -> u64 {
