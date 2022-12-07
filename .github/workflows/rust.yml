@@ -3,8 +3,8 @@ name: test-rust
 on:
   push:
     paths:
-      - '**.rs'
-      - '**Cargo.toml'
+      - "**.rs"
+      - "**Cargo.toml"
 env:
   CARGO_TERM_COLOR: always
 
@@ -13,11 +13,11 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-    - name: Git Checkout
-      uses: actions/checkout@v2
-    - name: Install Rust Toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    - name: cargo test
-      run: cd src/rust/ && cargo test --verbose
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+      - name: cargo test
+        run: cd src/rust/ && cargo test --verbose
