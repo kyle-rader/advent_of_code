@@ -89,16 +89,14 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
         };
 
         let content = format!(
-            "use anyhow::anyhow;
-
-#[allow(dead_code)]
-fn part1(input: &str) -> anyhow::Result<u64> {{
-    todo!()
+            "#[allow(dead_code)]
+fn part1(input: &str) -> Result<u64, String> {{
+    Ok(0)
 }}
 
 #[allow(dead_code)]
-fn part2(input: &str) -> anyhow::Result<u64> {{
-    todo!()
+fn part2(input: &str) -> Result<u64, String> {{
+    Ok(0)
 }}
 
 #[cfg(test)]
