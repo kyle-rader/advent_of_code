@@ -36,7 +36,7 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[allow(dead_code)]
 const INPUT: &str = "5104
 6131
 3553

@@ -147,7 +147,7 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[allow(dead_code)]
 const INPUT: &str = "29x13x26
 11x11x14
 27x2x5

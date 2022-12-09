@@ -74,7 +74,7 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[allow(dead_code)]
 const INPUT: &str = "zBBtHnnHtwwHplmlRlzPLCpp
 vvhJccJFGFcNsdNNJbhJsJQplQMRLQMlfdfTPCLfQQCT
 GPhjcjhZDjWtnSVH

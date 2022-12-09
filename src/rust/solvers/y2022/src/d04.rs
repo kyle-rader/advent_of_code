@@ -190,7 +190,7 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[allow(dead_code)]
 const INPUT: &str = "22-77,14-96
 7-99,65-98
 22-36,37-62

@@ -161,7 +161,7 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[allow(dead_code)]
 const INPUT: &str = "C Y
 C Y
 C Y
