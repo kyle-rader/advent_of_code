@@ -3,8 +3,19 @@ use std::str::FromStr;
 use thiserror::Error;
 
 #[allow(dead_code)]
-fn part1(input: &str) -> Result<u64, String> {
-    Ok(0)
+fn part1(input: &str) -> Result<u64, RangeParseError> {
+    let mut c = 0;
+    for line in input.lines() {
+        let mut parts = line.split(',');
+        let Some(a) = parts.next() else { return Err(RangeParseError::Format); };
+        let Some(b) = parts.next() else { return Err(RangeParseError::Format); };
+        let a = a.parse::<Range>()?;
+        let b = b.parse::<Range>()?;
+        if a.contains(&b) || b.contains(&a) {
+            c += 1;
+        }
+    }
+    Ok(c)
 }
 
 #[allow(dead_code)]
@@ -105,7 +116,7 @@ mod tests {
 
     #[test]
     fn part1_works() {
-        assert_eq!(part1(INPUT), Ok(42));
+        assert_eq!(part1(INPUT), Ok(532));
     }
 
     #[test]
