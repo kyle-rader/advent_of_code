@@ -19,8 +19,25 @@ fn part1(input: &str) -> Result<u64, RangeParseError> {
 }
 
 #[allow(dead_code)]
-fn part2(input: &str) -> Result<u64, String> {
-    Ok(0)
+fn part2(input: &str) -> Result<u64, RangeParseError> {
+    let mut c = 0;
+    for line_result in input.lines().map(parse_line) {
+        let Ok((a, b)) = line_result else { return line_result.map(|_| 0) };
+        if a.overlaps(&b) {
+            c += 1;
+        }
+    }
+    Ok(c)
+}
+
+type RangePair = (Range, Range);
+fn parse_line(line: &str) -> Result<RangePair, RangeParseError> {
+    let mut parts = line.split(',');
+    let Some(a) = parts.next() else { return Err(RangeParseError::Format); };
+    let Some(b) = parts.next() else { return Err(RangeParseError::Format); };
+    let a = a.parse::<Range>()?;
+    let b = b.parse::<Range>()?;
+    Ok((a, b))
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -33,6 +50,14 @@ impl Range {
     /// Check if other is contained by self.
     pub fn contains(&self, other: &Self) -> bool {
         self.start <= other.start && self.end >= other.end
+    }
+
+    /// Check if self and other overlap at all.
+    pub fn overlaps(&self, other: &Self) -> bool {
+        (self.start >= other.start && self.start <= other.end)
+            || (self.end >= other.start && self.end <= other.end)
+            || (other.start >= self.start && other.start <= self.end)
+            || (other.end >= self.start && other.end <= self.end)
     }
 }
 
@@ -115,13 +140,53 @@ mod tests {
     }
 
     #[test]
+    fn range_overlaps_right() {
+        // a = ...456...
+        // b = ....5678.
+        let a = Range { start: 4, end: 6 };
+        let b = Range { start: 5, end: 8 };
+        assert!(a.overlaps(&b));
+        assert!(b.overlaps(&a));
+    }
+
+    #[test]
+    fn range_overlaps_right_no_overlap() {
+        // a = ..345....
+        // b = ......789
+        let a = Range { start: 3, end: 5 };
+        let b = Range { start: 7, end: 9 };
+        assert!(!a.overlaps(&b));
+        assert!(!b.overlaps(&a));
+    }
+
+    #[test]
+    fn range_overlaps_left() {
+        // a = ...456...
+        // b = .2345....
+        let a = Range { start: 4, end: 6 };
+        let b = Range { start: 1, end: 5 };
+        assert!(a.overlaps(&b));
+        assert!(b.overlaps(&a));
+    }
+
+    #[test]
+    fn range_overlaps_left_no_overlap() {
+        // a = .....678.
+        // b = .234.....
+        let a = Range { start: 6, end: 8 };
+        let b = Range { start: 2, end: 4 };
+        assert!(!a.overlaps(&b));
+        assert!(!b.overlaps(&a));
+    }
+
+    #[test]
     fn part1_works() {
         assert_eq!(part1(INPUT), Ok(532));
     }
 
     #[test]
     fn part2_works() {
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(854));
     }
 }
 
