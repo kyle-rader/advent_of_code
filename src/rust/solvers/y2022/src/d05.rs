@@ -67,6 +67,33 @@ impl FromStr for Stacks {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+struct Move(u32, usize, usize);
+
+#[derive(Debug, Error, PartialEq, Eq)]
+enum MoveParseError {
+    #[error("No Amount found in line")]
+    NoAmount,
+    #[error("No From found in line")]
+    NoFrom,
+    #[error("No To found in line")]
+    NoTo,
+    #[error(transparent)]
+    ParseInt(#[from] std::num::ParseIntError),
+}
+
+impl FromStr for Move {
+    type Err = MoveParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts: Vec<&str> = s.split_whitespace().collect();
+        let amount: u32 = parts.get(1).ok_or(MoveParseError::NoAmount)?.parse()?;
+        let from: usize = parts.get(3).ok_or(MoveParseError::NoFrom)?.parse()?;
+        let to: usize = parts.get(5).ok_or(MoveParseError::NoTo)?.parse()?;
+        Ok(Move(amount, from, to))
+    }
+}
+
 #[derive(Debug, Error, PartialEq, Eq)]
 enum CrateTrackerError {
     #[error("Could not split starting state and moves from initial input")]
@@ -94,64 +121,99 @@ impl<'a> FromStr for CrateTracker<'a> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn array_chunks() {
-        let subject = "12345678";
-        let mut chunks = subject.chars().array_chunks::<3>();
-        assert_eq!(chunks.next(), Some(['1', '2', '3']));
-        assert_eq!(chunks.next(), Some(['4', '5', '6']));
-        assert_eq!(chunks.next(), None);
-    }
+    mod stacks {
+        use super::*;
 
-    #[test]
-    fn stacks_from_str() {
-        let input = "    [D]    
+        #[test]
+        fn from_str() {
+            let input = "    [D]    
 [N] [C]    
 [Z] [M] [P]
  1   2   3 
 ";
-        let expected = Stacks(vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]);
-        let subject: Result<Stacks, StackParseError> = input.parse();
-        assert_eq!(subject, Ok(expected));
-    }
+            let expected = Stacks(vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]);
+            let subject: Result<Stacks, StackParseError> = input.parse();
+            assert_eq!(subject, Ok(expected));
+        }
 
-    #[test]
-    fn stacks_no_input() {
-        let subject: Result<Stacks, StackParseError> = "".parse();
-        assert_eq!(subject, Err(StackParseError::NoCrates));
-    }
+        #[test]
+        fn no_input() {
+            let subject: Result<Stacks, StackParseError> = "".parse();
+            assert_eq!(subject, Err(StackParseError::NoCrates));
+        }
 
-    #[test]
-    fn stacks_can_actually_have_any_chars() {
-        let input = "$$$ [D]    
+        #[test]
+        fn can_actually_have_any_chars() {
+            let input = "$$$ [D]    
 [?] [🤔]    
 [Z] [M] [P]
  1   2   3 
 ";
-        let subject: Result<Stacks, StackParseError> = input.parse();
-        let expected = Stacks(vec![vec!['Z', '?', '$'], vec!['M', '🤔', 'D'], vec!['P']]);
-        assert_eq!(subject, Ok(expected));
-    }
+            let subject: Result<Stacks, StackParseError> = input.parse();
+            let expected = Stacks(vec![vec!['Z', '?', '$'], vec!['M', '🤔', 'D'], vec!['P']]);
+            assert_eq!(subject, Ok(expected));
+        }
 
-    #[test]
-    fn stacks_mis_aligned_second_row() {
-        let input = "[D]
+        #[test]
+        fn mis_aligned_second_row() {
+            let input = "[D]
 [?] [🤔]
 [Z] [M] [P]
  1   2   3 
 ";
-        let subject: Result<Stacks, StackParseError> = input.parse();
-        assert_eq!(subject, Err(StackParseError::Misaligned));
-    }
+            let subject: Result<Stacks, StackParseError> = input.parse();
+            assert_eq!(subject, Err(StackParseError::Misaligned));
+        }
 
-    #[test]
-    fn stacks_invalid_number_of_chars() {
-        let input = "[D  M]
+        #[test]
+        fn invalid_number_of_chars() {
+            let input = "[D  M]
 [D  M]
  1   2   3 
 ";
-        let subject: Result<Stacks, StackParseError> = input.parse();
-        assert_eq!(subject, Err(StackParseError::UnexpectedNumberOfChars));
+            let subject: Result<Stacks, StackParseError> = input.parse();
+            assert_eq!(subject, Err(StackParseError::UnexpectedNumberOfChars));
+        }
+    }
+
+    mod moves {
+        use super::*;
+
+        #[test]
+        fn move_parse() -> Result<(), MoveParseError> {
+            let input = "move 666 from 1 to 7";
+            let subject = input.parse();
+            let expected = Move(666, 1, 7);
+            assert_eq!(subject, Ok(expected));
+            Ok(())
+        }
+
+        #[test]
+        fn nothing() {
+            let subject: Result<Move, _> = "".parse();
+            let expected = Err(MoveParseError::NoAmount);
+            assert_eq!(subject, expected);
+        }
+
+        #[test]
+        fn no_from() {
+            let subject: Result<Move, _> = "move 42".parse();
+            let expected = Err(MoveParseError::NoFrom);
+            assert_eq!(subject, expected);
+        }
+
+        #[test]
+        fn no_to() {
+            let subject: Result<Move, _> = "move 42 from 1337".parse();
+            let expected = Err(MoveParseError::NoTo);
+            assert_eq!(subject, expected);
+        }
+
+        #[test]
+        fn not_int() {
+            let subject: Result<Move, _> = "move x from 1337 to 9".parse();
+            assert!(matches!(subject, Err(MoveParseError::ParseInt(_))));
+        }
     }
 
     #[test]
