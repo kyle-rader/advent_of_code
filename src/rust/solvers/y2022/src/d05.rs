@@ -14,10 +14,12 @@ fn part2(input: &str) -> Result<u64, String> {
 
 #[derive(Debug, Error, PartialEq, Eq)]
 enum StackParseError {
-    #[error("it broke")]
-    Broke,
     #[error("No crate rows found!")]
     NoCrates,
+    #[error("Ran into a row with a different number of stacks than the first row")]
+    Misaligned,
+    #[error("An unexpected number of characters were found in a row")]
+    UnexpectedNumberOfChars,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -29,20 +31,26 @@ impl FromStr for Stacks {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Chop off the "id row" because we don't need it
         let rows: Vec<&str> = s.lines().collect();
-        let rows = &rows[0..rows.len() - 1];
+        let last_row = rows.len().checked_sub(1).ok_or(StackParseError::NoCrates)?;
+        let rows = &rows[0..last_row];
 
         // Init the stacks
         let mut stacks: Vec<Vec<char>> = Vec::new();
         let row_length = rows.iter().nth(0).ok_or(StackParseError::NoCrates)?.len();
         let stack_count = (row_length + 1) / 4;
 
-        for _ in 0..stack_count {
-            stacks.push(Vec::new());
-        }
+        (0..stack_count).for_each(|_| stacks.push(Vec::new()));
 
         // Iterate over rows in reverse, so we can use 'push' to build the stacks (instead of stacks.insert(0, c))
         for row in rows.iter().rev() {
             let row: Vec<char> = row.chars().collect();
+            if (row_length + 1) % 4 != 0 {
+                return Err(StackParseError::UnexpectedNumberOfChars);
+            }
+            if row.len() != row_length {
+                return Err(StackParseError::Misaligned);
+            }
+
             for i in 0..stack_count {
                 //  x :0123456789
                 // row:[Z] [M] [P]
@@ -61,7 +69,7 @@ impl FromStr for Stacks {
 
 #[derive(Debug, Error, PartialEq, Eq)]
 enum CrateTrackerError {
-    #[error("Could not split starting state and moves from intial input")]
+    #[error("Could not split starting state and moves from initial input")]
     Split,
 }
 
@@ -105,6 +113,45 @@ mod tests {
         let expected = Stacks(vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]);
         let subject: Result<Stacks, StackParseError> = input.parse();
         assert_eq!(subject, Ok(expected));
+    }
+
+    #[test]
+    fn stacks_no_input() {
+        let subject: Result<Stacks, StackParseError> = "".parse();
+        assert_eq!(subject, Err(StackParseError::NoCrates));
+    }
+
+    #[test]
+    fn stacks_can_actually_have_any_chars() {
+        let input = "$$$ [D]    
+[?] [🤔]    
+[Z] [M] [P]
+ 1   2   3 
+";
+        let subject: Result<Stacks, StackParseError> = input.parse();
+        let expected = Stacks(vec![vec!['Z', '?', '$'], vec!['M', '🤔', 'D'], vec!['P']]);
+        assert_eq!(subject, Ok(expected));
+    }
+
+    #[test]
+    fn stacks_mis_aligned_second_row() {
+        let input = "[D]
+[?] [🤔]
+[Z] [M] [P]
+ 1   2   3 
+";
+        let subject: Result<Stacks, StackParseError> = input.parse();
+        assert_eq!(subject, Err(StackParseError::Misaligned));
+    }
+
+    #[test]
+    fn stacks_invalid_number_of_chars() {
+        let input = "[D  M]
+[D  M]
+ 1   2   3 
+";
+        let subject: Result<Stacks, StackParseError> = input.parse();
+        assert_eq!(subject, Err(StackParseError::UnexpectedNumberOfChars));
     }
 
     #[test]
