@@ -67,6 +67,12 @@ impl FromStr for Stacks {
     }
 }
 
+impl Stacks {
+    fn get_mut(&mut self, i: usize) -> Option<&mut Vec<char>> {
+        self.0.get_mut(i)
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 struct Move(u32, usize, usize);
 
@@ -95,25 +101,66 @@ impl FromStr for Move {
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
-enum CrateTrackerError {
+enum CrateTrackerParseError {
     #[error("Could not split starting state and moves from initial input")]
     Split,
+    #[error(transparent)]
+    Stack(#[from] StackParseError),
+    #[error(transparent)]
+    Move(#[from] MoveParseError),
+}
+
+#[derive(Debug, Error, PartialEq, Eq)]
+enum MoveCratesError {
+    #[error("{0}")]
+    MissingStack(String),
+    #[error("Out of crates in stack {0}")]
+    OutOfCrates(usize),
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct CrateTracker<'a> {
-    stacks: Vec<Vec<char>>,
-    moves: &'a str,
+struct CrateTracker {
+    stacks: Stacks,
+    moves: Vec<Move>,
 }
 
-impl<'a> FromStr for CrateTracker<'a> {
-    type Err = CrateTrackerError;
+impl CrateTracker {
+    pub fn move_crates(&mut self) -> Result<Vec<char>, MoveCratesError> {
+        for Move(amount, from_idx, to_idx) in self.moves.iter() {
+            for _ in 0..*amount {
+                let from = self.stacks.get_mut(*from_idx - 1).ok_or_else(|| {
+                    MoveCratesError::MissingStack(format!("from stack {from_idx} is not here"))
+                })?;
+
+                // un-borrow stacks, so we can borrow again to get the 'to' stack.
+                let from = from
+                    .pop()
+                    .ok_or(MoveCratesError::OutOfCrates(*from_idx - 1))?;
+
+                let to = self.stacks.get_mut(*to_idx - 1).ok_or_else(|| {
+                    MoveCratesError::MissingStack(format!("to stack {to_idx} is not here"))
+                })?;
+
+                to.push(from);
+            }
+        }
+
+        Ok(vec![])
+    }
+}
+
+impl FromStr for CrateTracker {
+    type Err = CrateTrackerParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let splits = s.split("\n\n").collect::<Vec<&str>>();
-        let [start, moves] = &splits[..] else { return Err(CrateTrackerError::Split); };
-        Err(CrateTrackerError::Split)
-        // Ok(CrateTracker { stacks, moves })
+        let [stacks, moves] = &splits[..] else { return Err(CrateTrackerParseError::Split); };
+        let stacks: Stacks = stacks.parse()?;
+        let moves: Vec<Move> = moves
+            .lines()
+            .map(|l| l.parse())
+            .collect::<Result<Vec<Move>, _>>()?;
+        Ok(CrateTracker { stacks, moves })
     }
 }
 
@@ -216,16 +263,39 @@ mod tests {
         }
     }
 
+    type CrateTrackerTestResult = Result<(), CrateTrackerParseError>;
+
     #[test]
-    #[ignore]
-    fn part1_works() {
-        assert_eq!(part1(INPUT), Ok(42));
+    fn move_crates() {
+        // [D]
+        // [N] [C]
+        // [Z] [M] [P]
+        //  1   2   3
+        let mut subject = CrateTracker {
+            stacks: Stacks(vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]),
+            moves: vec![Move(1, 2, 1), Move(3, 1, 3), Move(2, 2, 1), Move(1, 1, 2)],
+        };
+
+        assert_eq!(subject.move_crates(), Ok(vec!['C', 'M', 'Z']));
     }
 
     #[test]
     #[ignore]
-    fn part2_works() {
+    fn part1_works() {
+        // arrange
+        let mut crate_tracker: CrateTracker =
+            INPUT.parse().expect("the laws of physics no longer apply");
+
+        // act + assert
+        let top_crates = crate_tracker.move_crates();
+        assert_eq!(top_crates, Ok(vec!['a']));
+    }
+
+    #[test]
+    #[ignore]
+    fn part2_works() -> CrateTrackerTestResult {
         assert_eq!(part2(INPUT), Ok(42));
+        Ok(())
     }
 }
 
