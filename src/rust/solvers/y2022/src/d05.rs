@@ -293,7 +293,10 @@ mod tests {
 
         // act + assert
         let top_crates = crate_tracker.move_crates();
-        assert_eq!(top_crates, Ok(vec!['a']));
+        assert_eq!(
+            top_crates,
+            Ok(vec!['R', 'N', 'Z', 'L', 'F', 'Z', 'S', 'J', 'H'])
+        );
     }
 
     #[test]
