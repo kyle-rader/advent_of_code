@@ -2,18 +2,8 @@ use std::str::FromStr;
 
 use thiserror::Error;
 
-#[allow(dead_code)]
-fn part1(input: &str) -> Result<u64, String> {
-    Ok(0)
-}
-
-#[allow(dead_code)]
-fn part2(input: &str) -> Result<u64, String> {
-    Ok(0)
-}
-
 #[derive(Debug, Error, PartialEq, Eq)]
-enum StackParseError {
+pub enum StackParseError {
     #[error("No crate rows found!")]
     NoCrates,
     #[error("Ran into a row with a different number of stacks than the first row")]
@@ -23,7 +13,7 @@ enum StackParseError {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct Stacks(Vec<Vec<char>>);
+pub struct Stacks(Vec<Vec<char>>);
 
 impl FromStr for Stacks {
     type Err = StackParseError;
@@ -67,17 +57,98 @@ impl FromStr for Stacks {
     }
 }
 
+pub enum MoveType {
+    Part1,
+    Part2,
+}
+
 impl Stacks {
     fn get_mut(&mut self, i: usize) -> Option<&mut Vec<char>> {
         self.0.get_mut(i)
     }
+
+    pub fn execute_moves(
+        &mut self,
+        moves: &Vec<Move>,
+        move_type: MoveType,
+    ) -> Result<String, MoveCratesError> {
+        for Move(amount, from_idx, to_idx) in moves.iter() {
+            match move_type {
+                MoveType::Part1 => self.move_one_by_one(*amount, *from_idx, *to_idx)?,
+                MoveType::Part2 => self.move_group(*amount, *from_idx, *to_idx)?,
+            }
+        }
+
+        Ok(self
+            .0
+            .iter()
+            .filter_map(|s| s.last())
+            .map(|c| c.to_string())
+            .collect::<Vec<String>>()
+            .join(""))
+    }
+
+    fn move_one_by_one(
+        &mut self,
+        amount: u32,
+        from_idx: usize,
+        to_idx: usize,
+    ) -> Result<(), MoveCratesError> {
+        for _ in 0..amount {
+            let from = self.get_mut(from_idx - 1).ok_or_else(|| {
+                MoveCratesError::MissingStack(format!("from stack {from_idx} is not here"))
+            })?;
+
+            // un-borrow stacks, so we can borrow again to get the 'to' stack.
+            let from = from
+                .pop()
+                .ok_or(MoveCratesError::OutOfCrates(from_idx - 1))?;
+
+            let to = self.get_mut(to_idx - 1).ok_or_else(|| {
+                MoveCratesError::MissingStack(format!("to stack {to_idx} is not here"))
+            })?;
+
+            to.push(from);
+        }
+        Ok(())
+    }
+
+    fn move_group(
+        &mut self,
+        amount: u32,
+        from_idx: usize,
+        to_idx: usize,
+    ) -> Result<(), MoveCratesError> {
+        let mut temp = Vec::new();
+        for _ in 0..amount {
+            let from = self.get_mut(from_idx - 1).ok_or_else(|| {
+                MoveCratesError::MissingStack(format!("from stack {from_idx} is not here"))
+            })?;
+
+            let from = from
+                .pop()
+                .ok_or(MoveCratesError::OutOfCrates(from_idx - 1))?;
+
+            temp.push(from);
+        }
+
+        let to = self.get_mut(to_idx - 1).ok_or_else(|| {
+            MoveCratesError::MissingStack(format!("to stack {to_idx} is not here"))
+        })?;
+
+        for _ in 0..temp.len() {
+            to.push(temp.pop().unwrap());
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct Move(u32, usize, usize);
+pub struct Move(u32, usize, usize);
 
 #[derive(Debug, Error, PartialEq, Eq)]
-enum MoveParseError {
+pub enum MoveParseError {
     #[error("No Amount found in line")]
     NoAmount,
     #[error("No From found in line")]
@@ -101,7 +172,7 @@ impl FromStr for Move {
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
-enum CrateTrackerParseError {
+pub enum CrateTrackerParseError {
     #[error("Could not split starting state and moves from initial input")]
     Split,
     #[error(transparent)]
@@ -111,63 +182,22 @@ enum CrateTrackerParseError {
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
-enum MoveCratesError {
+pub enum MoveCratesError {
     #[error("{0}")]
     MissingStack(String),
     #[error("Out of crates in stack {0}")]
     OutOfCrates(usize),
 }
 
-#[derive(Debug, PartialEq, Eq)]
-struct CrateTracker {
-    stacks: Stacks,
-    moves: Vec<Move>,
-}
-
-impl CrateTracker {
-    pub fn move_crates(&mut self) -> Result<Vec<char>, MoveCratesError> {
-        for Move(amount, from_idx, to_idx) in self.moves.iter() {
-            for _ in 0..*amount {
-                let from = self.stacks.get_mut(*from_idx - 1).ok_or_else(|| {
-                    MoveCratesError::MissingStack(format!("from stack {from_idx} is not here"))
-                })?;
-
-                // un-borrow stacks, so we can borrow again to get the 'to' stack.
-                let from = from
-                    .pop()
-                    .ok_or(MoveCratesError::OutOfCrates(*from_idx - 1))?;
-
-                let to = self.stacks.get_mut(*to_idx - 1).ok_or_else(|| {
-                    MoveCratesError::MissingStack(format!("to stack {to_idx} is not here"))
-                })?;
-
-                to.push(from);
-            }
-        }
-
-        Ok(self
-            .stacks
-            .0
-            .iter()
-            .filter_map(|s| s.last())
-            .map(|c| *c)
-            .collect())
-    }
-}
-
-impl FromStr for CrateTracker {
-    type Err = CrateTrackerParseError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let splits = s.split("\n\n").collect::<Vec<&str>>();
-        let [stacks, moves] = &splits[..] else { return Err(CrateTrackerParseError::Split); };
-        let stacks: Stacks = stacks.parse()?;
-        let moves: Vec<Move> = moves
-            .lines()
-            .map(|l| l.parse())
-            .collect::<Result<Vec<Move>, _>>()?;
-        Ok(CrateTracker { stacks, moves })
-    }
+pub fn parse_problem(s: &str) -> Result<(Stacks, Vec<Move>), CrateTrackerParseError> {
+    let splits = s.split("\n\n").collect::<Vec<&str>>();
+    let [stacks, moves] = &splits[..] else { return Err(CrateTrackerParseError::Split); };
+    let stacks: Stacks = stacks.parse()?;
+    let moves: Vec<Move> = moves
+        .lines()
+        .map(|l| l.parse())
+        .collect::<Result<Vec<Move>, _>>()?;
+    Ok((stacks, moves))
 }
 
 #[cfg(test)]
@@ -275,35 +305,33 @@ mod tests {
         // [N] [C]
         // [Z] [M] [P]
         //  1   2   3
-        let mut subject = CrateTracker {
-            stacks: Stacks(vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]),
-            moves: vec![Move(1, 2, 1), Move(3, 1, 3), Move(2, 2, 1), Move(1, 1, 2)],
-        };
+        let mut stacks = Stacks(vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']]);
+        let moves = vec![Move(1, 2, 1), Move(3, 1, 3), Move(2, 2, 1), Move(1, 1, 2)];
 
-        assert_eq!(subject.move_crates(), Ok(vec!['C', 'M', 'Z']));
-    }
-
-    type CrateTrackerTestResult = Result<(), CrateTrackerParseError>;
-
-    #[test]
-    fn part1_works() {
-        // arrange
-        let mut crate_tracker: CrateTracker =
-            INPUT.parse().expect("the laws of physics no longer apply");
-
-        // act + assert
-        let top_crates = crate_tracker.move_crates();
         assert_eq!(
-            top_crates,
-            Ok(vec!['R', 'N', 'Z', 'L', 'F', 'Z', 'S', 'J', 'H'])
+            stacks.execute_moves(&moves, MoveType::Part1),
+            Ok(String::from("CMZ"))
         );
     }
 
     #[test]
-    #[ignore]
-    fn part2_works() -> CrateTrackerTestResult {
-        assert_eq!(part2(INPUT), Ok(42));
-        Ok(())
+    fn part1_works() {
+        // arrange
+        let (mut stacks, moves) = parse_problem(INPUT).expect("Failed to parse the problem");
+
+        // act + assert
+        let top_crates = stacks.execute_moves(&moves, MoveType::Part1);
+        assert_eq!(top_crates, Ok(String::from("RNZLFZSJH")));
+    }
+
+    #[test]
+    fn part2_works() {
+        // arrange
+        let (mut stacks, moves) = parse_problem(INPUT).expect("Failed to parse the problem");
+
+        // act + assert
+        let top_crates = stacks.execute_moves(&moves, MoveType::Part2);
+        assert_eq!(top_crates, Ok(String::from("CNSFCGJSM")));
     }
 }
 
