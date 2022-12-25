@@ -132,6 +132,8 @@ mod tests {{
                 lib.display()
             )));
         }
+    } else {
+        eprintln!("‼️ Source file for {day_id} already exists!");
     }
     Ok(())
 }
