@@ -145,7 +145,13 @@ impl CrateTracker {
             }
         }
 
-        Ok(vec![])
+        Ok(self
+            .stacks
+            .0
+            .iter()
+            .filter_map(|s| s.last())
+            .map(|c| *c)
+            .collect())
     }
 }
 
@@ -263,8 +269,6 @@ mod tests {
         }
     }
 
-    type CrateTrackerTestResult = Result<(), CrateTrackerParseError>;
-
     #[test]
     fn move_crates() {
         // [D]
@@ -279,8 +283,9 @@ mod tests {
         assert_eq!(subject.move_crates(), Ok(vec!['C', 'M', 'Z']));
     }
 
+    type CrateTrackerTestResult = Result<(), CrateTrackerParseError>;
+
     #[test]
-    #[ignore]
     fn part1_works() {
         // arrange
         let mut crate_tracker: CrateTracker =
@@ -300,8 +305,7 @@ mod tests {
 }
 
 #[cfg(test)]
-const INPUT: &str = "
-[S]                 [T] [Q]        
+const INPUT: &str = "[S]                 [T] [Q]        
 [L]             [B] [M] [P]     [T]
 [F]     [S]     [Z] [N] [S]     [R]
 [Z] [R] [N]     [R] [D] [F]     [V]
