@@ -53,7 +53,7 @@ fn marker_finder(s: &str, n: usize) -> Result<usize, String> {
         if let Some(to_remove) = last.pop_back() {
             counter.remove(to_remove);
         } else {
-            return Err(format!("Execpted to remove the last char in the sliding window on iteration {i} but got None"));
+            return Err(format!("Expected to remove the last char in the sliding window on iteration {i} but got None"));
         }
     }
     Err(String::from("Did not find marker!"))
@@ -132,7 +132,7 @@ mod tests {
 
     #[test]
     fn part2_works() {
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(3534));
     }
 }
 
