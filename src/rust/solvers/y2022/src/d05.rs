@@ -26,7 +26,7 @@ impl FromStr for Stacks {
 
         // Init the stacks
         let mut stacks: Vec<Vec<char>> = Vec::new();
-        let row_length = rows.iter().nth(0).ok_or(StackParseError::NoCrates)?.len();
+        let row_length = rows.first().ok_or(StackParseError::NoCrates)?.len();
         let stack_count = (row_length + 1) / 4;
 
         (0..stack_count).for_each(|_| stacks.push(Vec::new()));
@@ -41,14 +41,14 @@ impl FromStr for Stacks {
                 return Err(StackParseError::Misaligned);
             }
 
-            for i in 0..stack_count {
+            for (i, stack) in stacks.iter_mut().enumerate().take(stack_count) {
                 //  x :0123456789
                 // row:[Z] [M] [P]
                 // i  : 0   1   2
                 let j = i * 4 + 1;
                 match row[j] {
                     ' ' => {}
-                    c => stacks[i].push(c),
+                    c => stack.push(c),
                 }
             }
         }
@@ -69,7 +69,7 @@ impl Stacks {
 
     pub fn execute_moves(
         &mut self,
-        moves: &Vec<Move>,
+        moves: &[Move],
         move_type: MoveType,
     ) -> Result<String, MoveCratesError> {
         for Move(amount, from_idx, to_idx) in moves.iter() {

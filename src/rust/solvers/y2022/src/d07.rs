@@ -66,14 +66,10 @@ impl FromStr for OutputLine {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let tokens = s.split_whitespace().collect::<Vec<&str>>();
         match tokens.first().ok_or(OutputLineParseError::EmptyLine)? {
-            &"$" => {
-                return Ok(Self::Operation {
-                    op: Operation::try_from(&tokens[1..])?,
-                })
-            }
-            _ => {
-                return Ok(OutputLine::new_unknown(s));
-            }
+            &"$" => Ok(Self::Operation {
+                op: Operation::try_from(&tokens[1..])?,
+            }),
+            _ => Ok(OutputLine::new_unknown(s)),
         }
     }
 }

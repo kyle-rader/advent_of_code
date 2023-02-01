@@ -78,16 +78,10 @@ impl FromStr for Range {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split('-').filter(|s| !s.is_empty());
-        let start: u32 = parts
-            .next()
-            .ok_or_else(|| RangeParseError::MissingStart)?
-            .parse()?;
-        let end: u32 = parts
-            .next()
-            .ok_or_else(|| RangeParseError::MissingEnd)?
-            .parse()?;
+        let start: u32 = parts.next().ok_or(RangeParseError::MissingStart)?.parse()?;
+        let end: u32 = parts.next().ok_or(RangeParseError::MissingEnd)?.parse()?;
 
-        if let Some(_) = parts.next() {
+        if parts.next().is_some() {
             return Err(RangeParseError::Format);
         }
 

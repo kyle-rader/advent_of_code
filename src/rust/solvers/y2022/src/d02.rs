@@ -92,7 +92,7 @@ impl FromStr for Hand {
             "A" | "X" => Ok(Hand::Rock),
             "B" | "Y" => Ok(Hand::Paper),
             "C" | "Z" => Ok(Hand::Scissors),
-            _ => Err(format!("unknown hand value {}", value)),
+            _ => Err(format!("unknown hand value {value}")),
         }
     }
 }

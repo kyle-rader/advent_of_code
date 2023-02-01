@@ -25,8 +25,8 @@ fn prrority_of_bad_item(line: &str) -> u64 {
 
 fn priority(suspect: char) -> u64 {
     (match suspect as u8 {
-        n if n >= 97 && n <= 122 => n - 96,
-        n if n >= 65 && n <= 90 => n - 38,
+        n if (97..=122).contains(&n) => n - 96,
+        n if (65..=90).contains(&n) => n - 38,
         _ => panic!("Bad input!"),
     }) as u64
 }

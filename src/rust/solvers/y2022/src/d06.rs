@@ -1,4 +1,4 @@
-use std::collections::{hash_map::Entry, HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque};
 
 pub struct CharCounter {
     set: HashMap<char, u32>,
