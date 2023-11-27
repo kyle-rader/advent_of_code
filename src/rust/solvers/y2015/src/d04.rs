@@ -36,7 +36,7 @@ fn starts_with_zeros(digest: Vec<u8>, n: u8) -> bool {
 }
 
 #[cfg(test)]
-mod tests {
+mod test_y2015 {
     use super::*;
 
     #[ignore]

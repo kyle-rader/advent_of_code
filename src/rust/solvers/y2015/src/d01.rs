@@ -25,7 +25,7 @@ fn part2(input: &str) -> Option<usize> {
 }
 
 #[cfg(test)]
-mod tests {
+mod test_y2015 {
     use super::*;
 
     #[test]

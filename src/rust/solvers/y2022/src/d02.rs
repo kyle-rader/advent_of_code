@@ -128,7 +128,7 @@ fn part2(input: &str) -> Result<u64, String> {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_y2022 {
     use super::*;
 
     #[test]

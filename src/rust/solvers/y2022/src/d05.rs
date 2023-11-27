@@ -191,7 +191,9 @@ pub enum MoveCratesError {
 
 pub fn parse_problem(s: &str) -> Result<(Stacks, Vec<Move>), CrateTrackerParseError> {
     let splits = s.split("\n\n").collect::<Vec<&str>>();
-    let [stacks, moves] = &splits[..] else { return Err(CrateTrackerParseError::Split); };
+    let [stacks, moves] = &splits[..] else {
+        return Err(CrateTrackerParseError::Split);
+    };
     let stacks: Stacks = stacks.parse()?;
     let moves: Vec<Move> = moves
         .lines()
@@ -201,7 +203,7 @@ pub fn parse_problem(s: &str) -> Result<(Stacks, Vec<Move>), CrateTrackerParseEr
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_y2022 {
     use super::*;
 
     mod stacks {

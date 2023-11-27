@@ -7,8 +7,12 @@ fn part1(input: &str) -> Result<u64, RangeParseError> {
     let mut c = 0;
     for line in input.lines() {
         let mut parts = line.split(',');
-        let Some(a) = parts.next() else { return Err(RangeParseError::Format); };
-        let Some(b) = parts.next() else { return Err(RangeParseError::Format); };
+        let Some(a) = parts.next() else {
+            return Err(RangeParseError::Format);
+        };
+        let Some(b) = parts.next() else {
+            return Err(RangeParseError::Format);
+        };
         let a = a.parse::<Range>()?;
         let b = b.parse::<Range>()?;
         if a.contains(&b) || b.contains(&a) {
@@ -22,7 +26,9 @@ fn part1(input: &str) -> Result<u64, RangeParseError> {
 fn part2(input: &str) -> Result<u64, RangeParseError> {
     let mut c = 0;
     for line_result in input.lines().map(parse_line) {
-        let Ok((a, b)) = line_result else { return line_result.map(|_| 0) };
+        let Ok((a, b)) = line_result else {
+            return line_result.map(|_| 0);
+        };
         if a.overlaps(&b) {
             c += 1;
         }
@@ -33,8 +39,12 @@ fn part2(input: &str) -> Result<u64, RangeParseError> {
 type RangePair = (Range, Range);
 fn parse_line(line: &str) -> Result<RangePair, RangeParseError> {
     let mut parts = line.split(',');
-    let Some(a) = parts.next() else { return Err(RangeParseError::Format); };
-    let Some(b) = parts.next() else { return Err(RangeParseError::Format); };
+    let Some(a) = parts.next() else {
+        return Err(RangeParseError::Format);
+    };
+    let Some(b) = parts.next() else {
+        return Err(RangeParseError::Format);
+    };
     let a = a.parse::<Range>()?;
     let b = b.parse::<Range>()?;
     Ok((a, b))
@@ -90,7 +100,7 @@ impl FromStr for Range {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_y2022 {
     use super::*;
 
     #[test]

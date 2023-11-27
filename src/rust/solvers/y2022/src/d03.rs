@@ -34,10 +34,11 @@ fn priority(suspect: char) -> u64 {
 #[allow(dead_code)]
 fn part2(input: &str) -> u64 {
     let mut sum: u64 = 0;
-    for [a, b, c] in input.lines().array_chunks() {
-        let a: HashSet<char> = a.chars().collect();
-        let b: HashSet<char> = b.chars().collect();
-        let c: HashSet<char> = c.chars().collect();
+    let lines: Vec<&str> = input.lines().collect();
+    for i in (0..lines.len()).step_by(3) {
+        let a: HashSet<char> = lines[i].chars().collect();
+        let b: HashSet<char> = lines[i + 1].chars().collect();
+        let c: HashSet<char> = lines[i + 2].chars().collect();
 
         let inter1: HashSet<&char> = a.intersection(&b).collect();
         let inter2: HashSet<&char> = a.intersection(&c).collect();
@@ -47,7 +48,7 @@ fn part2(input: &str) -> u64 {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_y2022 {
     use super::*;
 
     #[test]

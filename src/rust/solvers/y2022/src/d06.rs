@@ -70,7 +70,7 @@ fn part2(input: &str) -> Result<usize, String> {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_y2022 {
     use super::*;
 
     mod packet_finder {

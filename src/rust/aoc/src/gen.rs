@@ -100,7 +100,7 @@ fn part2(input: &str) -> Result<u64, String> {{
 }}
 
 #[cfg(test)]
-mod tests {{
+mod tests_y{year} {{
     use super::*;
 
     #[test]
@@ -184,9 +184,16 @@ pub fn workspace_path() -> anyhow::Result<PathBuf> {
         .ancestors()
         .map(|dir| (dir, dir.join(CARGO_TOML)))
         .filter_map(|(dir, file)| {
-            if !file.is_file() { return None; }
-            let Ok(cargo_toml) = std::fs::read_to_string(&file) else { return None; };
-            let Ok(cargo_toml): Result<AocCargoWorkspace, _> = toml::from_str(cargo_toml.as_str()) else { return None; };
+            if !file.is_file() {
+                return None;
+            }
+            let Ok(cargo_toml) = std::fs::read_to_string(&file) else {
+                return None;
+            };
+            let Ok(cargo_toml): Result<AocCargoWorkspace, _> = toml::from_str(cargo_toml.as_str())
+            else {
+                return None;
+            };
             cargo_toml.is_rust_aoc_workspace().then_some(dir.into())
         })
         .next()

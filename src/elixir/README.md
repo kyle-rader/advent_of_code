@@ -1,6 +1,6 @@
 # Aoc
 
-**TODO: Add description**
+Advent of Code in [Elixir](https://elixir-lang.org)
 
 ## Installation
 

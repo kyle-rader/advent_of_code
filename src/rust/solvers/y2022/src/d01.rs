@@ -22,7 +22,7 @@ fn parse_elves(input: &str) -> Vec<u64> {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_y2022 {
     use super::*;
 
     #[test]
