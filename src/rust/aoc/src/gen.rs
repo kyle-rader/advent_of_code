@@ -76,6 +76,8 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
     let day_id = format!("d{day:02}");
     let source = solver_dir.join(SRC).join(format!("{day_id}.rs"));
     let lib = solver_dir.join(SRC).join("lib.rs");
+    let input_file_name = format!("{day_id}.txt");
+    let input_file = solver_dir.join(SRC).join(&input_file_name);
 
     if !source.is_file() {
         let token = auth::get_token()?;
@@ -87,6 +89,9 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
                 String::from("const INPUT: &str = \"TBD\";")
             }
         };
+
+        // write input to input file
+        fs::write(input_file, input)?;
 
         let content = format!(
             "#[allow(dead_code)]
@@ -103,6 +108,8 @@ fn part2(input: &str) -> Result<u64, String> {{
 mod tests_y{year} {{
     use super::*;
 
+    const INPUT: &str = include_str!(\"{input_file_name}\");
+
     #[test]
     fn part1_works() {{
         assert_eq!(part1(INPUT), Ok(42));
@@ -113,18 +120,17 @@ mod tests_y{year} {{
         assert_eq!(part2(INPUT), Ok(42));
     }}
 }}
-
-#[cfg(test)]
-{input}
 "
         );
         fs::write(&source, content)?;
 
-        // Append day to lib.rs
+        // Append day to lib.rs if it is not already there.
         let current_lib = fs::read_to_string(&lib)?;
         let mut mods: Vec<&str> = current_lib.lines().collect();
         let content = format!("mod {day_id};");
-        mods.push(content.as_str());
+        if !mods.contains(&content.as_str()) {
+            mods.push(content.as_str());
+        }
 
         if let Err(e) = fs::write(&lib, mods.join("\n")) {
             return Err(anyhow!(format!(
