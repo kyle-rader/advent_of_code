@@ -169,7 +169,10 @@ common = {{ path = \"../../common\" }}"
 
     let lib = src.join("lib.rs");
     if !lib.exists() {
-        fs::write(lib, "#![allow(dead_code)]\n")?;
+        fs::write(
+            lib,
+            "#![allow(dead_code)]\n#![allow(clippy::items_after_test_module)]\n",
+        )?;
     }
 
     Ok(())
