@@ -35,7 +35,7 @@ pub fn firefox_cookies_paths() -> anyhow::Result<Vec<PathBuf>> {
     }
 }
 
-pub fn aoc_session_token(cookie_file: &Path) -> anyhow::Result<String> {
+pub fn token_from_cookies(cookie_file: &Path) -> anyhow::Result<String> {
     let conn = Connection::open(cookie_file)?;
     let mut stmt = conn.prepare(
         "SELECT value FROM moz_cookies WHERE name = 'session' AND host = '.adventofcode.com'",
@@ -48,5 +48,20 @@ pub fn aoc_session_token(cookie_file: &Path) -> anyhow::Result<String> {
 }
 
 pub fn aoc_session_token_first() -> anyhow::Result<String> {
-    aoc_session_token(&firefox_cookies_paths()?[0])
+    let paths = firefox_cookies_paths()?;
+    if paths.len() == 1 {
+        token_from_cookies(&paths[0])
+    } else {
+        println!(
+            "⚠️ Found multiple cookie databases, Select One: [0-{}]",
+            paths.len() - 1
+        );
+        for (i, path) in paths.iter().enumerate() {
+            println!("{}: {}", i, path.display());
+        }
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input)?;
+        let index = input.trim().parse::<usize>()?;
+        token_from_cookies(&paths[index])
+    }
 }
