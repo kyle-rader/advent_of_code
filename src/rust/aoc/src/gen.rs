@@ -169,7 +169,7 @@ common = {{ path = \"../../common\" }}"
 
     let lib = src.join("lib.rs");
     if !lib.exists() {
-        fs::write(lib, "")?;
+        fs::write(lib, "#![allow(dead_code)]\n")?;
     }
 
     Ok(())
