@@ -1,0 +1,12 @@
+[package]
+name = "y2023"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.77"
+common = { path = "../../common" }
+thiserror = "1.0.52"
+
+[dev-dependencies]
+test-case = "3.3.1"

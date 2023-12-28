@@ -83,7 +83,7 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
         let token = auth::get_token()?;
         let client = AocClient::new(&token);
         let input = match client.input(year, day) {
-            Ok(val) => format!("const INPUT: &str = \"{val}\";"),
+            Ok(val) => val,
             Err(e) => {
                 eprintln!("Warning, could not get problem input. Using placeholder.\n{e}");
                 String::from("const INPUT: &str = \"TBD\";")
