@@ -3,14 +3,14 @@ use std::str::FromStr;
 use thiserror::Error;
 
 #[derive(Debug, PartialEq)]
-pub enum Cube {
+enum Cube {
     Red(u32),
     Green(u32),
     Blue(u32),
 }
 
 #[derive(Debug, Error, Eq, PartialEq)]
-pub enum CubeError {
+enum CubeError {
     #[error("missing count")]
     MissingCount,
 
@@ -64,8 +64,16 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn total(&self) -> u32 {
-        self.red + self.green + self.blue
+    pub fn power(&self) -> u64 {
+        (self.red as u64) * (self.green as u64) * (self.blue as u64)
+    }
+
+    pub fn possible(&self, max_red: u32, max_green: u32, max_blue: u32) -> bool {
+        self.red <= max_red && self.green <= max_green && self.blue <= max_blue
+    }
+
+    pub fn games_from_str(input: &str) -> Result<Vec<Game>, GameError> {
+        input.lines().map(|line| line.parse::<Game>()).collect()
     }
 }
 
@@ -129,5 +137,21 @@ mod tests_y2023_cubes {
             blue: 4,
         };
         assert_eq!(subject, Ok(expected));
+    }
+
+    #[test_case("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green", 48)]
+    #[test_case("Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue", 12)]
+    #[test_case(
+        "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
+        1560
+    )]
+    #[test_case(
+        "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red",
+        630
+    )]
+    #[test_case("Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green", 36)]
+    fn game_power(s: &str, expected: u64) {
+        let subject = s.parse::<Game>().unwrap();
+        assert_eq!(subject.power(), expected);
     }
 }
