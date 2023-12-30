@@ -143,6 +143,10 @@ dependencies = [
 [[package]]
 name = "common"
 version = "0.1.0"
+dependencies = [
+ "pretty_assertions",
+ "test-case",
+]
 
 [[package]]
 name = "convert_case"
