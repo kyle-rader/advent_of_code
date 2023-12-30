@@ -9,4 +9,5 @@ common = { path = "../../common" }
 thiserror = "1.0.52"
 
 [dev-dependencies]
+pretty_assertions = "1.4.0"
 test-case = "3.3.1"

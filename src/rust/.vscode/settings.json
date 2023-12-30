@@ -2,5 +2,8 @@
     "cSpell.words": [
         "Deque",
         "reqwest"
+    ],
+    "rust-analyzer.linkedProjects": [
+        ".\\solvers\\y2023\\Cargo.toml"
     ]
 }
