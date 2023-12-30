@@ -4,6 +4,8 @@
         "reqwest"
     ],
     "rust-analyzer.linkedProjects": [
+        ".\\solvers\\y2023\\Cargo.toml",
+        ".\\solvers\\y2023\\Cargo.toml",
         ".\\solvers\\y2023\\Cargo.toml"
     ]
 }
