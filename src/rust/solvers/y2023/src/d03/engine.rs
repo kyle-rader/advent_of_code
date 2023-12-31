@@ -126,6 +126,20 @@ impl Schematic {
 
         Ok(part_number)
     }
+
+    fn gear_locations(&self) -> Vec<(usize, usize)> {
+        let mut gear_locations = vec![];
+
+        for (row, line) in self.data.iter().enumerate() {
+            for (col, c) in line.iter().enumerate() {
+                if *c == '*' {
+                    gear_locations.push((row, col));
+                }
+            }
+        }
+
+        gear_locations
+    }
 }
 
 impl From<&str> for Schematic {
@@ -163,6 +177,13 @@ mod tests_y2023_engine {
 ......755.
 ...$.*....
 .664.598..";
+
+    #[test]
+    fn gear_locations() {
+        let schematic = Schematic::from(INPUT);
+        let subject = schematic.gear_locations();
+        assert_eq!(subject, vec![(1, 3), (4, 3), (8, 5)]);
+    }
 
     #[test]
     fn part_numbers() {

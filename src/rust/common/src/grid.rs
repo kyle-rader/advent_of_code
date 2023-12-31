@@ -1,9 +1,10 @@
 pub trait Grid {
-    fn neighbors(&self, x: usize, y: usize) -> Vec<(usize, usize)>;
+    fn neighbors_single(&self, row: usize, col: usize) -> Vec<(usize, usize)>;
+    fn neighbors_range(&self, row: usize, start: usize, end: usize) -> Vec<(usize, usize)>;
 }
 
 impl<T> Grid for Vec<Vec<T>> {
-    fn neighbors(&self, row: usize, col: usize) -> Vec<(usize, usize)> {
+    fn neighbors_single(&self, row: usize, col: usize) -> Vec<(usize, usize)> {
         let neighbors = vec![
             (row.checked_sub(1), col.checked_sub(1)),
             (row.checked_sub(1), Some(col)),
@@ -34,6 +35,40 @@ impl<T> Grid for Vec<Vec<T>> {
                 }
             })
             .collect()
+    }
+
+    fn neighbors_range(&self, row: usize, start: usize, end: usize) -> Vec<(usize, usize)> {
+        let mut neighbors = vec![];
+        let start_expanded = start.saturating_sub(1);
+        let end_expanded = end + 1;
+
+        // Add the neighbors above if we're not on the first row
+        if let Some(above) = row.checked_sub(1) {
+            let end = end_expanded.min(self[above].len().saturating_sub(1));
+            for col in start_expanded..=end {
+                neighbors.push((above, col));
+            }
+        }
+
+        // Add the neighbors below if we're not on the last row
+        let below = row + 1;
+        if below < self.len() {
+            let end = end_expanded.min(self[below].len().saturating_sub(1));
+            for col in start_expanded..=end {
+                neighbors.push((below, col));
+            }
+        }
+
+        // Add the neighbors to the left if we're not on the first column
+        if let Some(left) = start.checked_sub(1) {
+            neighbors.push((row, left));
+        }
+        let right = end + 1;
+        if right < self[row].len() {
+            neighbors.push((row, right));
+        }
+
+        neighbors
     }
 }
 
@@ -87,7 +122,7 @@ mod tests_grid {
     #[test_case(0, 0, &[(0, 1), (1, 0), (1, 1)])]
     fn neighbors(row: usize, col: usize, expected: &[(usize, usize)]) {
         let subject = grid(5, 3, '.');
-        let neighbors = subject.neighbors(row, col);
+        let neighbors = subject.neighbors_single(row, col);
         assert_eq!(neighbors, expected.to_vec())
     }
 
@@ -111,14 +146,14 @@ mod tests_grid {
             vec!['x', '?'],
             vec!['x', 'x', 'x'],
         ];
-        let neighbors = subject.neighbors(row, col);
+        let neighbors = subject.neighbors_single(row, col);
         assert_eq!(neighbors, expected.to_vec())
     }
 
     #[test]
     fn neighbors_empty() {
         let subject: Vec<Vec<char>> = vec![];
-        let neighbors = subject.neighbors(5, 5);
+        let neighbors = subject.neighbors_single(5, 5);
         assert_eq!(neighbors, vec![])
     }
 }

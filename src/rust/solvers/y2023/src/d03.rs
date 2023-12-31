@@ -21,7 +21,7 @@ mod tests_y2023 {
 
     #[test]
     fn part1_works() {
-        assert_eq!(part1(INPUT), Ok(42));
+        assert_eq!(part1(INPUT), Ok(530495));
     }
 
     #[test]
