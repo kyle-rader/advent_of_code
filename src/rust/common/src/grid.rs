@@ -45,10 +45,11 @@ impl<T> Grid for Vec<Vec<T>> {
         let mut neighbors = vec![];
 
         // Check that the range given is in the grid.
-        if row >= self.len() {
+        if start > end {
+            return Err(NeighborsError::StartGreaterThanEnd { start, end });
+        } else if row >= self.len() {
             return Err(NeighborsError::MissingRow(row));
         }
-
         // else if end >= self[row].len() {
         //     return Err(NeighborsError::MissingColumns {
         //         row,
@@ -179,12 +180,14 @@ mod tests_grid {
     }
 
     #[test]
-    fn neigbors_range_can_be_in_reverse() {
+    fn neighbors_start_greater_than_end() {
         let subject = grid(5, 5, 0_u8);
         let neighbors = subject.neighbors_range(2, 4, 2);
         assert_eq!(
             neighbors,
-            Err(NeighborsError::StartGreaterThanEnd { start: 5, end: 2 })
+            Err(NeighborsError::StartGreaterThanEnd { start: 4, end: 2 })
         )
     }
+
+    // TODO: Test range being out of bounds.
 }
