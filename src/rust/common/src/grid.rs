@@ -82,9 +82,9 @@ impl<T> Grid for Vec<Vec<T>> {
         if let Some(left) = start.checked_sub(1) {
             neighbors.push((row, left));
         }
-        let right = end + 1;
-        if right < self[row].len() {
-            neighbors.push((row, right));
+        // Add the neighbors to the right if we're not on the last column
+        if end_expanded < self[row].len() {
+            neighbors.push((row, end_expanded));
         }
 
         Ok(neighbors)
