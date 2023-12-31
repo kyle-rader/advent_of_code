@@ -9,7 +9,7 @@ pub enum NeighborsError {
     #[error(
         "The requested range ({start}..={end}) is out of bounds for row {row} of length {length}."
     )]
-    MissingColumns {
+    OutOfBounds {
         row: usize,
         length: usize,
         start: usize,
@@ -22,8 +22,8 @@ pub enum NeighborsError {
 type NeighborsResult<T> = Result<T, NeighborsError>;
 
 pub trait Grid {
-    fn neighbors_single(&self, row: usize, col: usize) -> NeighborsResult<Vec<(usize, usize)>>;
-    fn neighbors_range(
+    fn neighbors_cell(&self, row: usize, col: usize) -> NeighborsResult<Vec<(usize, usize)>>;
+    fn neighbors_row(
         &self,
         row: usize,
         start: usize,
@@ -32,11 +32,11 @@ pub trait Grid {
 }
 
 impl<T> Grid for Vec<Vec<T>> {
-    fn neighbors_single(&self, row: usize, col: usize) -> NeighborsResult<Vec<(usize, usize)>> {
-        self.neighbors_range(row, col, col)
+    fn neighbors_cell(&self, row: usize, col: usize) -> NeighborsResult<Vec<(usize, usize)>> {
+        self.neighbors_row(row, col, col)
     }
 
-    fn neighbors_range(
+    fn neighbors_row(
         &self,
         row: usize,
         start: usize,
@@ -49,17 +49,14 @@ impl<T> Grid for Vec<Vec<T>> {
             return Err(NeighborsError::StartGreaterThanEnd { start, end });
         } else if row >= self.len() {
             return Err(NeighborsError::MissingRow(row));
+        } else if end >= self[row].len() {
+            return Err(NeighborsError::OutOfBounds {
+                row,
+                length: self[row].len(),
+                start,
+                end,
+            });
         }
-        // else if end >= self[row].len() {
-        //     return Err(NeighborsError::MissingColumns {
-        //         row,
-        //         length: self[row].len(),
-        //         start,
-        //         end,
-        //     });
-        // } else if start > end {
-        //     return Err(NeighborsError::StartGreaterThanEnd { start, end });
-        // }
 
         let start_expanded = start.saturating_sub(1);
         let end_expanded = end + 1;
@@ -144,7 +141,7 @@ mod tests_grid {
     #[test_case(0, 0, &[(1, 0), (1, 1), (0, 1)])]
     fn neighbors(row: usize, col: usize, expected: &[(usize, usize)]) {
         let subject = grid(5, 3, '.');
-        let neighbors = subject.neighbors_single(row, col);
+        let neighbors = subject.neighbors_cell(row, col);
         assert_eq!(neighbors, Ok(expected.to_vec()))
     }
 
@@ -168,26 +165,41 @@ mod tests_grid {
             vec!['x', '?'],
             vec!['x', 'x', 'x'],
         ];
-        let neighbors = subject.neighbors_single(row, col);
+        let neighbors = subject.neighbors_cell(row, col);
         assert_eq!(neighbors, Ok(expected.to_vec()))
     }
 
     #[test]
     fn neighbors_empty() {
         let subject: Vec<Vec<char>> = vec![];
-        let neighbors = subject.neighbors_single(5, 5);
+        let neighbors = subject.neighbors_cell(5, 5);
         assert_eq!(neighbors, Err(NeighborsError::MissingRow(5)))
     }
 
     #[test]
     fn neighbors_start_greater_than_end() {
         let subject = grid(5, 5, 0_u8);
-        let neighbors = subject.neighbors_range(2, 4, 2);
+        let neighbors = subject.neighbors_row(2, 4, 2);
         assert_eq!(
             neighbors,
             Err(NeighborsError::StartGreaterThanEnd { start: 4, end: 2 })
         )
     }
 
-    // TODO: Test range being out of bounds.
+    #[test_case(0, 5)]
+    #[test_case(5, 5)]
+    #[test_case(2, 10_000)]
+    fn neighbors_range_out_of_bounds(start: usize, end: usize) {
+        let subject = grid(5, 5, 0_u8);
+        let neighbors = subject.neighbors_row(2, start, end);
+        assert_eq!(
+            neighbors,
+            Err(NeighborsError::OutOfBounds {
+                row: 2,
+                length: 5,
+                start,
+                end,
+            })
+        )
+    }
 }
