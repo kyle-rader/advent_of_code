@@ -1,44 +1,65 @@
+use std::error;
+
+use thiserror::Error;
+
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum NeighborsError {
+    #[error("The requested row ({0}) is not in the grid.")]
+    MissingRow(usize),
+    #[error(
+        "The requested range ({start}..={end}) is out of bounds for row {row} of length {length}."
+    )]
+    MissingColumns {
+        row: usize,
+        length: usize,
+        start: usize,
+        end: usize,
+    },
+    #[error("The requested range ({start}..={end}) is invalid. Start must be less than or equal to end.")]
+    StartGreaterThanEnd { start: usize, end: usize },
+}
+
+type NeighborsResult<T> = Result<T, NeighborsError>;
+
 pub trait Grid {
-    fn neighbors_single(&self, row: usize, col: usize) -> Vec<(usize, usize)>;
-    fn neighbors_range(&self, row: usize, start: usize, end: usize) -> Vec<(usize, usize)>;
+    fn neighbors_single(&self, row: usize, col: usize) -> NeighborsResult<Vec<(usize, usize)>>;
+    fn neighbors_range(
+        &self,
+        row: usize,
+        start: usize,
+        end: usize,
+    ) -> NeighborsResult<Vec<(usize, usize)>>;
 }
 
 impl<T> Grid for Vec<Vec<T>> {
-    fn neighbors_single(&self, row: usize, col: usize) -> Vec<(usize, usize)> {
-        let neighbors = vec![
-            (row.checked_sub(1), col.checked_sub(1)),
-            (row.checked_sub(1), Some(col)),
-            (row.checked_sub(1), Some(col + 1)),
-            (Some(row), col.checked_sub(1)),
-            // Skip the center
-            (Some(row), Some(col + 1)),
-            (Some(row + 1), col.checked_sub(1)),
-            (Some(row + 1), Some(col)),
-            (Some(row + 1), Some(col + 1)),
-        ];
-
-        // Filter out any neighbors that are out of bounds from checked subtractions
-        let neighbors = neighbors
-            .into_iter()
-            .filter_map(|(row, col)| match (row, col) {
-                (Some(row), Some(col)) => Some((row, col)),
-                _ => None,
-            });
-
-        // Filter out any neighbors that are out of bounds by going to far in the positive direction
-        neighbors
-            .filter_map(|(row, col)| {
-                if row >= self.len() || col >= self[row].len() {
-                    None
-                } else {
-                    Some((row, col))
-                }
-            })
-            .collect()
+    fn neighbors_single(&self, row: usize, col: usize) -> NeighborsResult<Vec<(usize, usize)>> {
+        self.neighbors_range(row, col, col)
     }
 
-    fn neighbors_range(&self, row: usize, start: usize, end: usize) -> Vec<(usize, usize)> {
+    fn neighbors_range(
+        &self,
+        row: usize,
+        start: usize,
+        end: usize,
+    ) -> NeighborsResult<Vec<(usize, usize)>> {
         let mut neighbors = vec![];
+
+        // Check that the range given is in the grid.
+        if row >= self.len() {
+            return Err(NeighborsError::MissingRow(row));
+        }
+
+        // else if end >= self[row].len() {
+        //     return Err(NeighborsError::MissingColumns {
+        //         row,
+        //         length: self[row].len(),
+        //         start,
+        //         end,
+        //     });
+        // } else if start > end {
+        //     return Err(NeighborsError::StartGreaterThanEnd { start, end });
+        // }
+
         let start_expanded = start.saturating_sub(1);
         let end_expanded = end + 1;
 
@@ -68,7 +89,7 @@ impl<T> Grid for Vec<Vec<T>> {
             neighbors.push((row, right));
         }
 
-        neighbors
+        Ok(neighbors)
     }
 }
 
@@ -98,14 +119,14 @@ mod tests_grid {
     1 . x x x .
     2 . . . . .
      */
-    #[test_case(0, 2, &[(0, 1), (0, 3), (1, 1), (1, 2), (1, 3)])]
+    #[test_case(0, 2, &[(1, 1), (1, 2), (1, 3), (0, 1), (0, 3)])]
     /*
       0 1 2 3 4
     0 . x x x .
     1 . x ? x .
     2 . x x x .
      */
-    #[test_case(1, 2, &[(0, 1), (0, 2), (0, 3), (1, 1), (1, 3), (2, 1), (2, 2), (2, 3)])]
+    #[test_case(1, 2, &[(0, 1), (0, 2), (0, 3), (2, 1), (2, 2), (2, 3), (1, 1), (1, 3)])]
     /*
       0 1 2 3 4
     0 . . . . .
@@ -119,11 +140,11 @@ mod tests_grid {
     1 x x . . .
     2 . . . . .
      */
-    #[test_case(0, 0, &[(0, 1), (1, 0), (1, 1)])]
+    #[test_case(0, 0, &[(1, 0), (1, 1), (0, 1)])]
     fn neighbors(row: usize, col: usize, expected: &[(usize, usize)]) {
         let subject = grid(5, 3, '.');
         let neighbors = subject.neighbors_single(row, col);
-        assert_eq!(neighbors, expected.to_vec())
+        assert_eq!(neighbors, Ok(expected.to_vec()))
     }
 
     /*
@@ -132,14 +153,14 @@ mod tests_grid {
     1 x ?
     2 x x x
      */
-    #[test_case(1, 1, &[(0, 0), (0, 1), (0, 2), (1, 0), (2, 0), (2, 1), (2, 2)])]
+    #[test_case(1, 1, &[(0, 0), (0, 1), (0, 2), (2, 0), (2, 1), (2, 2), (1, 0)])]
     /*
       0 1 2 3
     0 x x . .
     1 ? x
     2 x x .
      */
-    #[test_case(1, 0, &[(0, 0), (0, 1), (1, 1), (2, 0), (2, 1)])]
+    #[test_case(1, 0, &[(0, 0), (0, 1), (2, 0), (2, 1), (1, 1)])]
     fn neighbors_jagged(row: usize, col: usize, expected: &[(usize, usize)]) {
         let subject = vec![
             vec!['x', 'x', 'x', '.'],
@@ -147,13 +168,23 @@ mod tests_grid {
             vec!['x', 'x', 'x'],
         ];
         let neighbors = subject.neighbors_single(row, col);
-        assert_eq!(neighbors, expected.to_vec())
+        assert_eq!(neighbors, Ok(expected.to_vec()))
     }
 
     #[test]
     fn neighbors_empty() {
         let subject: Vec<Vec<char>> = vec![];
         let neighbors = subject.neighbors_single(5, 5);
-        assert_eq!(neighbors, vec![])
+        assert_eq!(neighbors, Err(NeighborsError::MissingRow(5)))
+    }
+
+    #[test]
+    fn neigbors_range_can_be_in_reverse() {
+        let subject = grid(5, 5, 0_u8);
+        let neighbors = subject.neighbors_range(2, 4, 2);
+        assert_eq!(
+            neighbors,
+            Err(NeighborsError::StartGreaterThanEnd { start: 5, end: 2 })
+        )
     }
 }
