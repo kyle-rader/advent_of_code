@@ -1,5 +1,3 @@
-use std::error;
-
 use thiserror::Error;
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -96,14 +94,14 @@ mod tests_grid {
     use super::*;
     use test_case::test_case;
 
-    fn grid<T>(x: usize, y: usize, i: T) -> Vec<Vec<T>>
+    fn grid<T>(rows: usize, cols: usize, i: T) -> Vec<Vec<T>>
     where
         T: Copy,
     {
-        let mut grid = Vec::with_capacity(y);
-        for _ in 0..y {
-            let mut row = Vec::with_capacity(x);
-            for _ in 0..x {
+        let mut grid = Vec::with_capacity(rows);
+        for _ in 0..rows {
+            let mut row = Vec::with_capacity(cols);
+            for _ in 0..cols {
                 row.push(i);
             }
             grid.push(row);
@@ -139,8 +137,8 @@ mod tests_grid {
     2 . . . . .
      */
     #[test_case(0, 0, &[(1, 0), (1, 1), (0, 1)])]
-    fn neighbors(row: usize, col: usize, expected: &[(usize, usize)]) {
-        let subject = grid(5, 3, '.');
+    fn neighbors(row: usize, col: usize, expected: &[RowCol]) {
+        let subject = grid(3, 5, '.');
         let neighbors = subject.neighbors_cell(row, col);
         assert_eq!(neighbors, Ok(expected.to_vec()))
     }
@@ -159,7 +157,7 @@ mod tests_grid {
     2 x x .
      */
     #[test_case(1, 0, &[(0, 0), (0, 1), (2, 0), (2, 1), (1, 1)])]
-    fn neighbors_jagged(row: usize, col: usize, expected: &[(usize, usize)]) {
+    fn neighbors_jagged(row: usize, col: usize, expected: &[RowCol]) {
         let subject = vec![
             vec!['x', 'x', 'x', '.'],
             vec!['x', '?'],
