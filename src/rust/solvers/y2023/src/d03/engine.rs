@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use common::grid::Grid;
+use common::grid::{Grid, GridBoundsError};
 
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum SchematicError {}
@@ -21,24 +21,42 @@ enum LookingFor {
     End,
 }
 
+#[derive(Debug, Copy, Clone)]
+pub struct PartNumber {
+    pub id: u64,
+    pub row: usize,
+    pub start: usize,
+    pub end: usize,
+}
+
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum PartNumberError {
+    #[error("Row {0} is not in the grid")]
+    MissingRow(usize),
+    #[error("Range {0}..{1} is out of bounds")]
+    RangeOutOfBounds(usize, usize),
+    #[error(transparent)]
+    ParseInt(#[from] std::num::ParseIntError),
+    #[error(transparent)]
+    GridBounds(#[from] GridBoundsError),
+}
+
 impl Schematic {
     fn valid_part_number_location(
         &self,
         row: usize,
         start: usize,
         end: usize,
-    ) -> Result<bool, String> {
+    ) -> Result<bool, GridBoundsError> {
         // Check if part number location is adjacent to a symbol
-
         Ok(self
             .data
-            .neighbors_row(row, start, end)
-            .map_err(|e| e.to_string())?
+            .neighbors_row(row, start, end)?
             .iter()
             .any(|point| is_symbol(&self.data[point.0][point.1])))
     }
 
-    pub fn part_numbers(&self) -> Result<Vec<u64>, String> {
+    pub fn part_numbers(&self) -> Result<Vec<PartNumber>, PartNumberError> {
         let mut part_numbers = vec![];
 
         for (row, line) in self.data.iter().enumerate() {
@@ -58,10 +76,8 @@ impl Schematic {
                         end = col - 1;
                         looking_for = LookingFor::Start;
 
-                        if let Ok(true) = self.valid_part_number_location(row, start, end) {
-                            if let Ok(part_number) = self.part_number(row, start, end) {
-                                part_numbers.push(part_number);
-                            }
+                        if self.valid_part_number_location(row, start, end)? {
+                            part_numbers.push(self.part_number(row, start, end)?);
                         }
                     }
                 }
@@ -70,10 +86,8 @@ impl Schematic {
             // Check if we ended on a valid part number
             if let LookingFor::End = &looking_for {
                 end = self.length_x - 1;
-                if let Ok(true) = self.valid_part_number_location(row, start, end) {
-                    if let Ok(part_number) = self.part_number(row, start, end) {
-                        part_numbers.push(part_number);
-                    }
+                if self.valid_part_number_location(row, start, end)? {
+                    part_numbers.push(self.part_number(row, start, end)?);
                 }
             }
         }
@@ -81,15 +95,28 @@ impl Schematic {
         Ok(part_numbers)
     }
 
-    fn part_number(&self, row: usize, start: usize, end: usize) -> Result<u64, String> {
-        let part_number = self
+    fn part_number(
+        &self,
+        row: usize,
+        start: usize,
+        end: usize,
+    ) -> Result<PartNumber, PartNumberError> {
+        let id: u64 = self
             .data
             .get(row)
-            .and_then(|line| line.get(start..=end))
-            .and_then(|chars| chars.iter().collect::<String>().parse().ok())
-            .ok_or_else(|| format!("Failed to parse part number at row {}, col {}", row, end))?;
+            .ok_or(PartNumberError::MissingRow(row))?
+            .get(start..=end)
+            .ok_or(PartNumberError::RangeOutOfBounds(start, end))?
+            .iter()
+            .collect::<String>()
+            .parse()?;
 
-        Ok(part_number)
+        Ok(PartNumber {
+            id,
+            row,
+            start,
+            end,
+        })
     }
 
     fn gear_locations(&self) -> Vec<(usize, usize)> {
@@ -129,6 +156,7 @@ impl From<&str> for Schematic {
 #[cfg(test)]
 mod tests_y2023_engine {
     use super::*;
+    use anyhow::Result;
     use test_case::test_case;
 
     const INPUT: &str = "
@@ -151,10 +179,15 @@ mod tests_y2023_engine {
     }
 
     #[test]
-    fn part_numbers() {
+    fn part_numbers() -> anyhow::Result<()> {
         let schematic = Schematic::from(INPUT);
-        let subject = schematic.part_numbers();
-        assert_eq!(subject, Ok(vec![467, 35, 6339, 617, 592, 755, 664, 598]));
+        let subject = schematic
+            .part_numbers()?
+            .iter()
+            .map(|part| part.id)
+            .collect::<Vec<u64>>();
+        assert_eq!(subject, vec![467, 35, 6339, 617, 592, 755, 664, 598]);
+        Ok(())
     }
 
     #[test]
