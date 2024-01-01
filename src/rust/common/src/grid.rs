@@ -1,23 +1,6 @@
 use thiserror::Error;
 
 #[derive(Debug, Error, PartialEq, Eq)]
-pub enum NeighborsRowError {
-    #[error("The requested row ({0}) is not in the grid.")]
-    MissingRow(usize),
-    #[error(
-        "The requested range ({start}..={end}) is out of bounds for row {row} of length {length}."
-    )]
-    OutOfBounds {
-        row: usize,
-        length: usize,
-        start: usize,
-        end: usize,
-    },
-    #[error("The requested range ({start}..={end}) is invalid. Start must be less than or equal to end.")]
-    StartGreaterThanEnd { start: usize, end: usize },
-}
-
-#[derive(Debug, Error, PartialEq, Eq)]
 pub enum GridBoundsError {
     #[error("Row {0} is not in the grid which has {1} rows.")]
     MissingRow(usize, usize),
@@ -25,19 +8,13 @@ pub enum GridBoundsError {
     MissingColumn(usize, usize, usize),
 }
 
-type NeighborsRowResult<T> = Result<T, NeighborsRowError>;
 type NeighborsResult<T> = Result<T, GridBoundsError>;
 type RowCol = (usize, usize);
 
 pub trait Grid {
     fn in_grid(&self, point: &RowCol) -> Result<(), GridBoundsError>;
-    fn neighbors_cell(&self, point: &RowCol) -> NeighborsRowResult<Vec<RowCol>>;
-    fn neighbors_row(
-        &self,
-        row: usize,
-        start: usize,
-        end: usize,
-    ) -> NeighborsRowResult<Vec<RowCol>>;
+    fn neighbors_cell(&self, point: &RowCol) -> NeighborsResult<Vec<RowCol>>;
+    fn neighbors_row(&self, row: usize, start: usize, end: usize) -> NeighborsResult<Vec<RowCol>>;
     fn neighbors_grid(&self, start: &RowCol, end: &RowCol) -> NeighborsResult<Vec<RowCol>>;
 }
 
@@ -56,62 +33,12 @@ impl<T> Grid for Vec<Vec<T>> {
         }
     }
 
-    fn neighbors_cell(&self, point: &RowCol) -> NeighborsRowResult<Vec<RowCol>> {
-        self.neighbors_row(point.0, point.1, point.1)
+    fn neighbors_cell(&self, point: &RowCol) -> NeighborsResult<Vec<RowCol>> {
+        self.neighbors_grid(point, point)
     }
 
-    fn neighbors_row(
-        &self,
-        row: usize,
-        start: usize,
-        end: usize,
-    ) -> NeighborsRowResult<Vec<RowCol>> {
-        let mut neighbors = vec![];
-
-        // Check that the range given is in the grid.
-        if start > end {
-            return Err(NeighborsRowError::StartGreaterThanEnd { start, end });
-        } else if row >= self.len() {
-            return Err(NeighborsRowError::MissingRow(row));
-        } else if end >= self[row].len() {
-            return Err(NeighborsRowError::OutOfBounds {
-                row,
-                length: self[row].len(),
-                start,
-                end,
-            });
-        }
-
-        let start_expanded = start.saturating_sub(1);
-        let end_expanded = end + 1;
-
-        // Add the neighbors above if we're not on the first row
-        if let Some(above) = row.checked_sub(1) {
-            let end = end_expanded.min(self[above].len().saturating_sub(1));
-            for col in start_expanded..=end {
-                neighbors.push((above, col));
-            }
-        }
-
-        // Add the neighbors below if we're not on the last row
-        let below = row + 1;
-        if below < self.len() {
-            let end = end_expanded.min(self[below].len().saturating_sub(1));
-            for col in start_expanded..=end {
-                neighbors.push((below, col));
-            }
-        }
-
-        // Add the neighbors to the left if we're not on the first column
-        if let Some(left) = start.checked_sub(1) {
-            neighbors.push((row, left));
-        }
-        // Add the neighbors to the right if we're not on the last column
-        if end_expanded < self[row].len() {
-            neighbors.push((row, end_expanded));
-        }
-
-        Ok(neighbors)
+    fn neighbors_row(&self, row: usize, start: usize, end: usize) -> NeighborsResult<Vec<RowCol>> {
+        self.neighbors_grid(&(row, start), &(row, end))
     }
 
     fn neighbors_grid(&self, start: &RowCol, end: &RowCol) -> NeighborsResult<Vec<RowCol>> {
@@ -263,35 +190,8 @@ mod tests_grid {
     #[test]
     fn neighbors_empty() {
         let subject: Vec<Vec<char>> = vec![];
-        let neighbors = subject.neighbors_cell(&(5, 5));
-        assert_eq!(neighbors, Err(NeighborsRowError::MissingRow(5)))
-    }
-
-    #[test]
-    fn neighbors_start_greater_than_end() {
-        let subject = grid(5, 5, 0_u8);
-        let neighbors = subject.neighbors_row(2, 4, 2);
-        assert_eq!(
-            neighbors,
-            Err(NeighborsRowError::StartGreaterThanEnd { start: 4, end: 2 })
-        )
-    }
-
-    #[test_case(0, 5)]
-    #[test_case(5, 5)]
-    #[test_case(2, 10_000)]
-    fn neighbors_range_out_of_bounds(start: usize, end: usize) {
-        let subject = grid(5, 5, 0_u8);
-        let neighbors = subject.neighbors_row(2, start, end);
-        assert_eq!(
-            neighbors,
-            Err(NeighborsRowError::OutOfBounds {
-                row: 2,
-                length: 5,
-                start,
-                end,
-            })
-        )
+        let neighbors = subject.neighbors_cell(&(1, 1));
+        assert_eq!(neighbors, Err(GridBoundsError::MissingRow(1, 0)))
     }
 
     #[test]
