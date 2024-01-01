@@ -1,5 +1,6 @@
-use std::str::FromStr;
 use thiserror::Error;
+
+use common::grid::Grid;
 
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum SchematicError {}
@@ -27,50 +28,14 @@ impl Schematic {
         start: usize,
         end: usize,
     ) -> Result<bool, String> {
-        // Check if part number location is adjacent to a non-digit, non-period symbol
+        // Check if part number location is adjacent to a symbol
 
-        if start > end {
-            return Err(format!(
-                "start ({}) must be less than or equal to end ({})",
-                start, end
-            ));
-        }
-
-        // Start and End are inclusive and need to expand out by 1 to encompass the part number
-        let start_expanded = start.saturating_sub(1);
-        let end_expanded = (self.length_x.saturating_sub(1)).min(end + 1);
-
-        // Check above
-        if let Some(above) = row.checked_sub(1) {
-            if self.has_symbol(above, start_expanded, end_expanded) {
-                return Ok(true);
-            }
-        }
-
-        // Check below
-        let below = row + 1;
-        if below < self.length_y && self.has_symbol(below, start_expanded, end_expanded) {
-            return Ok(true);
-        }
-
-        // Check Left
-        if let Some(left) = start.checked_sub(1) {
-            if self.has_symbol(row, left, left) {
-                return Ok(true);
-            }
-        }
-
-        // Check Right
-        let right = end + 1;
-        if right < self.length_x && self.has_symbol(row, right, right) {
-            return Ok(true);
-        }
-
-        Ok(false)
-    }
-
-    fn has_symbol(&self, row: usize, start: usize, end: usize) -> bool {
-        self.data[row][start..=end].iter().any(is_symbol)
+        Ok(self
+            .data
+            .neighbors_row(row, start, end)
+            .map_err(|e| e.to_string())?
+            .iter()
+            .any(|point| is_symbol(&self.data[point.0][point.1])))
     }
 
     pub fn part_numbers(&self) -> Result<Vec<u64>, String> {
