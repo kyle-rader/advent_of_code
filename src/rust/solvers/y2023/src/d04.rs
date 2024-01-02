@@ -1,4 +1,4 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 #[allow(dead_code)]
 fn part1(input: &str) -> Result<u64, String> {
@@ -35,24 +35,48 @@ fn score_card(line: &str) -> u64 {
 
 #[allow(dead_code)]
 fn part2(input: &str) -> Result<u64, String> {
-    let card_scores: Vec<usize> = input
+    let card_matches: Vec<usize> = input
         .lines()
         .map(parse_card)
         .map(|(winning, have)| winning.intersection(&have).count())
         .collect();
-    let mut total = card_scores.len() as u64;
-    let mut queue: VecDeque<usize> = (0..card_scores.len()).collect();
+    let queue: Vec<usize> = (0..card_matches.len()).collect();
+    let mut total = card_matches.len() as u64;
+    let mut cache: HashMap<usize, u64> = HashMap::new();
 
-    while !queue.is_empty() {
-        let card = queue.pop_front().unwrap();
-        let score = card_scores[card];
-        let cards_won: Vec<usize> = (card..=(card + score as usize)).skip(1).collect();
+    // Seed the cache with cards that have 0 matches, as those will not recurse.
+    for (i, matches) in card_matches.iter().enumerate() {
+        if *matches == 0 {
+            cache.insert(i, 0);
+        }
+    }
 
-        cards_won.iter().for_each(|c| queue.push_back(*c));
-        total += score as u64;
+    for card in queue {
+        total += part2_score_card(card, &card_matches, &mut cache);
     }
 
     Ok(total)
+}
+
+fn part2_score_card(
+    card: usize,
+    card_matches: &Vec<usize>,
+    cache: &mut HashMap<usize, u64>,
+) -> u64 {
+    if let Some(score) = cache.get(&card) {
+        return *score;
+    }
+
+    let matches = card_matches[card];
+    let cards_won: Vec<usize> = (card..=(card + matches)).skip(1).collect();
+
+    let mut total = matches as u64;
+    for card in cards_won {
+        total += part2_score_card(card, card_matches, cache);
+    }
+
+    cache.insert(card, total);
+    total
 }
 
 #[cfg(test)]
