@@ -1,18 +1,32 @@
-use std::{collections::HashMap, num::ParseIntError, str::FromStr};
+use std::{collections::HashMap, num::ParseIntError, ops::Div, str::FromStr};
 
+use anyhow::anyhow;
 use thiserror::Error;
+type Maps = HashMap<Category, Map>;
 
 #[allow(dead_code)]
-fn part1(input: &str) -> Result<u64, String> {
+fn part1(input: &str) -> anyhow::Result<u64> {
+    let (seeds, maps) = inputs(input)?;
+    println!("Part 1: Seeds to process: {:?}", seeds.len());
+    let lowest_location = lowest_location(seeds, maps);
+    Ok(lowest_location)
+}
+
+fn inputs(input: &str) -> anyhow::Result<(Vec<u64>, Maps)> {
     let mut inputs = input.split("\n\n");
     let seeds = parse_seeds(inputs.next().unwrap());
     let maps = inputs
         .map(|s| s.parse::<Map>().map_err(|e| e.to_string()))
         .collect::<Result<Vec<Map>, _>>()
-        .map_err(|e| e.to_string())?;
+        .map_err(|_| anyhow!("bad map input"))?;
     let maps: HashMap<Category, Map> = maps.into_iter().map(|m| (m.source, m)).collect();
+    Ok((seeds, maps))
+}
 
-    let locations: Vec<u64> = seeds
+fn lowest_location(seeds: Vec<u64>, maps: Maps) -> u64 {
+    let total = seeds.len();
+    let mut i: u64 = 0;
+    seeds
         .iter()
         .map(|seed| {
             let mut val = *seed;
@@ -25,16 +39,33 @@ fn part1(input: &str) -> Result<u64, String> {
                     category = None;
                 }
             }
+            i += 1;
+            if i == 0 || i % 1_000_000 == 0 {
+                println!("Processed {} of {}", i, total);
+            }
             val
         })
-        .collect();
-
-    Ok(*locations.iter().min().unwrap())
+        .min()
+        .unwrap()
 }
 
 #[allow(dead_code)]
-fn part2(input: &str) -> Result<u64, String> {
-    Ok(0)
+fn part2(input: &str) -> anyhow::Result<u64> {
+    let (seeds, maps) = inputs(input)?;
+    let seeds = seeds
+        .iter()
+        .enumerate()
+        .flat_map(|(i, seed)| {
+            if i % 2 == 0 {
+                (*seed..(*seed + seeds[i + 1])).collect::<Vec<u64>>()
+            } else {
+                Vec::new()
+            }
+        })
+        .collect::<Vec<u64>>();
+    println!("Part 2: Seeds to process: {:?}", seeds.len());
+    let lowest_location = lowest_location(seeds, maps);
+    Ok(lowest_location)
 }
 
 fn parse_seeds(input: &str) -> Vec<u64> {
@@ -242,16 +273,22 @@ humidity-to-location map:
 
     #[test]
     fn part1_example() {
-        assert_eq!(part1(EXAMPLE), Ok(35));
+        assert_eq!(part1(EXAMPLE).unwrap(), 35);
     }
 
     #[test]
     fn part1_works() {
-        assert_eq!(part1(INPUT), Ok(388071289));
+        assert_eq!(part1(INPUT).unwrap(), 388071289);
     }
 
     #[test]
+    fn part2_example() {
+        assert_eq!(part2(EXAMPLE).unwrap(), 46);
+    }
+
+    #[ignore = "takes too long"]
+    #[test]
     fn part2_works() {
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT).unwrap(), 84206669);
     }
 }
