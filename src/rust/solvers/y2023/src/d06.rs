@@ -69,7 +69,7 @@ Distance:  9  40  200";
 
     #[test]
     fn part1_works() {
-        assert_eq!(part1(INPUT), Ok(42));
+        assert_eq!(part1(INPUT), Ok(3317888));
     }
 
     #[test]
