@@ -9,8 +9,9 @@ fn part1(input: &str) -> Result<usize, String> {
 }
 
 #[allow(dead_code)]
-fn part2(input: &str) -> Result<u64, String> {
-    Ok(0)
+fn part2(input: &str) -> Result<usize, String> {
+    let race = parse_input2(input)?;
+    Ok(possible_wins(race))
 }
 
 type Race = (usize, usize);
@@ -22,11 +23,24 @@ fn parse_input(input: &str) -> Result<Vec<Race>, String> {
     Ok(times.into_iter().zip(distances).collect())
 }
 
+fn parse_input2(input: &str) -> Result<Race, String> {
+    let mut lines = input.lines();
+    let time = number_from_line(lines.next().ok_or("missing times row")?)?;
+    let dist = number_from_line(lines.next().ok_or("missing distances row")?)?;
+    Ok((time, dist))
+}
+
 fn numbers_from_line(line: &str) -> Result<Vec<usize>, String> {
     line.split_whitespace()
         .skip(1)
         .map(|s| s.parse::<usize>().map_err(|e| e.to_string()))
         .collect()
+}
+
+fn number_from_line(line: &str) -> Result<usize, String> {
+    let full_number: Vec<&str> = line.split_whitespace().skip(1).collect();
+    let full_number = full_number.join("");
+    full_number.parse::<usize>().map_err(|e| e.to_string())
 }
 
 fn possible_wins(race: Race) -> usize {
@@ -55,6 +69,12 @@ Distance:  9  40  200";
         assert_eq!(parse_input(EXAMPLE), Ok(expected));
     }
 
+    #[test]
+    fn test_inputs_2() {
+        let expected = (71530, 940200);
+        assert_eq!(parse_input2(EXAMPLE), Ok(expected));
+    }
+
     #[test_case((7, 9), 4)]
     #[test_case((15, 40), 8)]
     #[test_case((30, 200), 9)]
@@ -73,7 +93,12 @@ Distance:  9  40  200";
     }
 
     #[test]
+    fn part2_example_works() {
+        assert_eq!(part2(EXAMPLE), Ok(71503));
+    }
+
+    #[test]
     fn part2_works() {
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(24655068));
     }
 }
