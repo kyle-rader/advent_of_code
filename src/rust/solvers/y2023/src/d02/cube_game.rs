@@ -10,7 +10,7 @@ enum Cube {
 }
 
 #[derive(Debug, Error, Eq, PartialEq)]
-enum CubeError {
+pub enum CubeError {
     #[error("missing count")]
     MissingCount,
 

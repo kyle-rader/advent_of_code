@@ -1,5 +1,3 @@
-use std::array::IntoIter;
-
 use thiserror::Error;
 
 #[allow(dead_code)]
@@ -13,14 +11,10 @@ fn part2(input: &str) -> Result<u64, String> {
 }
 
 fn sum_lines(input: &str, decoder: impl Fn(&str) -> Result<u64, DecodeError>) -> u64 {
-    input
-        .lines()
-        .filter_map(|l| decoder(l).ok())
-        .map(|d| d as u64)
-        .sum::<u64>()
+    input.lines().filter_map(|l| decoder(l).ok()).sum::<u64>()
 }
 
-fn combine_first_and_last(digits: &Vec<u32>) -> Result<u64, DecodeError> {
+fn combine_first_and_last(digits: &[u32]) -> Result<u64, DecodeError> {
     let first = *digits.first().ok_or(DecodeError)? as u64;
     let last = *digits.last().ok_or(DecodeError)? as u64;
     Ok(first * 10 + last)
@@ -31,13 +25,13 @@ fn combine_first_and_last(digits: &Vec<u32>) -> Result<u64, DecodeError> {
 struct DecodeError;
 
 fn decode_line1(line: impl AsRef<str>) -> Result<u64, DecodeError> {
-    let digits = line
+    let digits: Vec<u32> = line
         .as_ref()
         .chars()
         .filter_map(|c| c.to_digit(10))
         .collect();
 
-    combine_first_and_last(&digits)
+    combine_first_and_last(digits.as_slice())
 }
 
 const SPELLINGS: [&str; 9] = [
@@ -50,7 +44,7 @@ fn decode_line2(line: impl AsRef<str>) -> Result<u64, DecodeError> {
     let line = line.as_ref();
     let chars = line.chars().collect::<Vec<char>>();
 
-    'outer: while i < line.len() {
+    while i < line.len() {
         // First check if current char is a digit
         if let Some(d) = chars[i].to_digit(10) {
             digits.push(d);

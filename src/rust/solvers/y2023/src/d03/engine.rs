@@ -156,7 +156,6 @@ impl From<&str> for Schematic {
 #[cfg(test)]
 mod tests_y2023_engine {
     use super::*;
-    use anyhow::Result;
     use test_case::test_case;
 
     const INPUT: &str = "
