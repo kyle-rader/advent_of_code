@@ -2036,6 +2036,8 @@ version = "0.1.0"
 dependencies = [
  "common",
  "md-5",
+ "pretty_assertions",
+ "test-case",
  "thiserror",
 ]
 

@@ -7,3 +7,7 @@ edition = "2021"
 common = { path = "../../common" }
 md-5 = "0.10.5"
 thiserror = "1.0.37"
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
+test-case = "3.3.1"
