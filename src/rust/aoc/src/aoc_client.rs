@@ -31,7 +31,12 @@ impl<'a> AocClient<'a> {
     }
 
     pub fn input(&self, year: usize, day: usize) -> anyhow::Result<String> {
-        self.get(format!("{AOC_URL}/{year}/day/{day}/input"))
+        let input = self.get(format!("{AOC_URL}/{year}/day/{day}/input"))?;
+        if input.contains("log in") {
+            Err(anyhow!("It looks like your token is invalid"))
+        } else {
+            Ok(input)
+        }
     }
 
     pub fn problem(&self, year: usize, day: usize) -> anyhow::Result<String> {

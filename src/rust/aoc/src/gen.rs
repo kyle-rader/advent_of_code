@@ -64,7 +64,7 @@ pub fn new(year: usize, day: usize) -> Result<()> {
 
     // Does this day already exist? (Abort if so)
     if let Err(e) = ensure_day(&solver_dir, year, day) {
-        eprintln!("Failed to generate day {day:02}.\n{e}");
+        eprintln!("⚠️  Failed to generate year {year:04} day {day:02}");
         return Err(e);
     }
 
@@ -82,13 +82,7 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
     if !source.is_file() {
         let token = auth::get_token()?;
         let client = AocClient::new(&token);
-        let input = match client.input(year, day) {
-            Ok(val) => val,
-            Err(e) => {
-                eprintln!("Warning, could not get problem input. Using placeholder.\n{e}");
-                String::from("const INPUT: &str = \"TBD\";")
-            }
-        };
+        let input = client.input(year, day)?;
 
         // write input to input file
         fs::write(input_file, input)?;
@@ -132,16 +126,16 @@ mod tests_y{year} {{
             mods.push(content.as_str());
         }
 
-        if let Err(e) = fs::write(&lib, mods.join("\n")) {
-            return Err(anyhow!(format!(
+        fs::write(&lib, mods.join("\n")).map_err(|e| {
+            anyhow!(format!(
                 "Error appending mod {day_id}; to {}.\n{e}",
                 lib.display()
-            )));
-        }
+            ))
+        })
     } else {
         eprintln!("‼️ Source file for {day_id} already exists!");
+        Ok(())
     }
-    Ok(())
 }
 
 fn ensure_solver_project(solver_dir: &Path, year: usize) -> anyhow::Result<()> {
