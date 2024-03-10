@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
         "Deque",
-        "reqwest"
+        "reqwest",
+        "rusqlite"
     ],
     "rust-analyzer.linkedProjects": [
         "./Cargo.toml",

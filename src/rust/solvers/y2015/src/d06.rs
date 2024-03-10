@@ -26,7 +26,7 @@ fn part1(input: &str) -> anyhow::Result<u64> {
 
 #[allow(dead_code)]
 fn part2(input: &str) -> anyhow::Result<i64> {
-    let mut lights_brightness = vec![0 as i32; 1000 * 1000].into_boxed_slice();
+    let mut lights_brightness = vec![0_i32; 1000 * 1000].into_boxed_slice();
     for line in input.lines() {
         let (action, start, end) = parse_line(line)?;
         for light in lights(start, end) {
