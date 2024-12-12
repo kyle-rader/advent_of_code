@@ -1,19 +1,19 @@
 fn main() {
     let maxes = [
-        ("i8", std::i8::MAX as u128),
-        ("u8", std::u8::MAX as u128),
-        ("i16", std::i16::MAX as u128),
-        ("u16", std::u16::MAX as u128),
-        ("u32", std::u32::MAX as u128),
-        ("i32", std::i32::MAX as u128),
-        ("i64", std::i64::MAX as u128),
-        ("u64", std::u64::MAX as u128),
-        ("isize", std::isize::MAX as u128),
-        ("usize", std::usize::MAX as u128),
-        ("i128", std::i128::MAX as u128),
-        ("u128", std::u128::MAX),
-        ("f32", std::f32::MAX as u128),
-        ("f64", std::f64::MAX as u128),
+        ("i8", i8::MAX as u128),
+        ("u8", u8::MAX as u128),
+        ("i16", i16::MAX as u128),
+        ("u16", u16::MAX as u128),
+        ("u32", u32::MAX as u128),
+        ("i32", i32::MAX as u128),
+        ("i64", i64::MAX as u128),
+        ("u64", u64::MAX as u128),
+        ("isize", isize::MAX as u128),
+        ("usize", usize::MAX as u128),
+        ("i128", i128::MAX as u128),
+        ("u128", u128::MAX),
+        ("f32", f32::MAX as u128),
+        ("f64", f64::MAX as u128),
     ];
 
     print_max(&maxes);
