@@ -1,10 +1,10 @@
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_until},
+    bytes::complete::tag,
     character::complete::{anychar, char, digit1, space0},
     combinator::{map_res, opt},
     multi::{many0, many_till},
-    sequence::{delimited, preceded, separated_pair, tuple},
+    sequence::{delimited, separated_pair},
     IResult,
 };
 
@@ -15,7 +15,21 @@ fn part1(input: &str) -> IResult<&str, i64> {
 
 #[allow(dead_code)]
 fn part2(input: &str) -> Result<u64, String> {
-    Ok(0)
+    let instructions = parse_instructions(input).map_err(|e| e.to_string())?.1;
+    let mut sum = 0;
+    let mut enabled = true;
+    for instr in instructions {
+        match instr {
+            Instruction::Do => enabled = true,
+            Instruction::Dont => enabled = false,
+            Instruction::Mul(a, b) => {
+                if enabled {
+                    sum += a * b;
+                }
+            }
+        }
+    }
+    Ok(sum as u64)
 }
 
 fn mul_matches(input: &str) -> IResult<&str, Vec<i64>> {
@@ -74,7 +88,6 @@ enum Instruction {
     Mul(i64, i64),
     Do,
     Dont,
-    Garbage,
 }
 
 #[cfg(test)]
