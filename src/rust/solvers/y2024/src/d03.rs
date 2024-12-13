@@ -126,6 +126,7 @@ mod tests_y2024 {
                 Instruction::Dont,
                 Instruction::Mul(5, 5),
                 Instruction::Mul(11, 8),
+                Instruction::Do,
                 Instruction::Mul(8, 5)
             ]
         );
@@ -138,6 +139,6 @@ mod tests_y2024 {
 
     #[test]
     fn part2_works() {
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(90669332));
     }
 }
