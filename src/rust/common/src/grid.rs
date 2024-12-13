@@ -11,14 +11,18 @@ pub enum GridBoundsError {
 type NeighborsResult<T> = Result<T, GridBoundsError>;
 type RowCol = (usize, usize);
 
-pub trait Grid {
+pub trait Grid<T> {
     fn in_grid(&self, point: &RowCol) -> Result<(), GridBoundsError>;
     fn neighbors_cell(&self, point: &RowCol) -> NeighborsResult<Vec<RowCol>>;
     fn neighbors_row(&self, row: usize, start: usize, end: usize) -> NeighborsResult<Vec<RowCol>>;
     fn neighbors_grid(&self, start: &RowCol, end: &RowCol) -> NeighborsResult<Vec<RowCol>>;
+    fn words(&self, point: &RowCol, length: usize) -> Vec<Vec<T>>;
 }
 
-impl<T> Grid for Vec<Vec<T>> {
+impl<T> Grid<T> for Vec<Vec<T>>
+where
+    T: Copy,
+{
     fn in_grid(&self, point: &RowCol) -> Result<(), GridBoundsError> {
         if point.0 >= self.len() {
             Err(GridBoundsError::MissingRow(point.0, self.len()))
@@ -92,6 +96,91 @@ impl<T> Grid for Vec<Vec<T>> {
         }
 
         Ok(neighbors)
+    }
+
+    fn words(&self, point: &RowCol, length: usize) -> Vec<Vec<T>> {
+        let mut words = vec![];
+        let row = point.0;
+        let col = point.1;
+        let at_least = length - 1;
+
+        if row >= self.len() || col >= self[row].len() {
+            return words;
+        }
+
+        // Down
+        if row + length <= self.len() {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row + i][col]);
+            }
+            words.push(word);
+        }
+
+        // Left
+        if col >= at_least {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row][col - i]);
+            }
+            words.push(word);
+        }
+
+        // Right
+        if col + length <= self[row].len() {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row][col + i]);
+            }
+            words.push(word);
+        }
+
+        // Up
+        if row >= at_least {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row - i][col]);
+            }
+            words.push(word);
+        }
+
+        // Down-right
+        if row + length <= self.len() && col + length <= self[row].len() {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row + i][col + i]);
+            }
+            words.push(word);
+        }
+
+        // Down-left
+        if row + length <= self.len() && col >= at_least {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row + i][col - i]);
+            }
+            words.push(word);
+        }
+
+        // Up-right
+        if row >= at_least && col + length <= self[row].len() {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row - i][col + i]);
+            }
+            words.push(word);
+        }
+
+        // Up-left
+        if row >= at_least && col >= at_least {
+            let mut word = vec![];
+            for i in 0..length {
+                word.push(self[row - i][col - i]);
+            }
+            words.push(word);
+        }
+
+        words
     }
 }
 
@@ -257,5 +346,84 @@ mod tests_grid {
         let subject = grid(5, 6, 0_u8);
         let neighbors = subject.neighbors_grid(&start, &end);
         assert_eq!(neighbors, Ok(expected.to_vec()))
+    }
+
+    fn word_grid() -> Vec<Vec<char>> {
+        vec![
+            vec!['a', 'b', 'c', 'd', '1'],
+            vec!['e', 'f', 'g', 'h', '2'],
+            vec!['i', 'j', 'k', 'l', '3'],
+            vec!['m', 'n', 'o', 'p', '4'],
+            vec!['q', 'r', 's', 't', '5'],
+        ]
+    }
+
+    #[test]
+    fn grid_words_from_0_0() {
+        let subject = word_grid();
+
+        let words = subject.words(&(0, 0), 3);
+
+        assert_eq!(
+            words,
+            vec![
+                vec!['a', 'e', 'i'],
+                vec!['a', 'b', 'c'],
+                vec!['a', 'f', 'k'],
+            ]
+        );
+    }
+
+    #[test]
+    fn grid_words_from_0_4() {
+        let subject = word_grid();
+
+        let words = subject.words(&(0, 4), 3);
+
+        assert_eq!(
+            words,
+            vec![
+                vec!['1', '2', '3'],
+                vec!['1', 'd', 'c'],
+                vec!['1', 'h', 'k'],
+            ]
+        );
+    }
+
+    #[test]
+    fn grid_words_from_4_4() {
+        let subject = word_grid();
+
+        let words = subject.words(&(4, 4), 3);
+
+        assert_eq!(
+            words,
+            vec![
+                vec!['5', 't', 's'],
+                vec!['5', '4', '3'],
+                vec!['5', 'p', 'k'],
+            ]
+        );
+    }
+
+    #[test]
+    fn grid_words_from_center() {
+        let subject = word_grid();
+
+        let words = subject.words(&(2, 2), 3);
+
+        assert_eq!(
+            words,
+            vec![
+                vec!['k', 'o', 's'], // down ✅
+                vec!['k', 'j', 'i'], // left
+                vec!['k', 'l', '3'], // right ✅
+                vec!['k', 'g', 'c'], // up
+                vec!['k', 'p', '5'], // down-right ✅
+                vec!['k', 'n', 'q'], // down-left
+                vec!['k', 'h', '1'], // up-right
+                vec!['k', 'f', 'a'], // up-left
+            ]
+        );
     }
 }
