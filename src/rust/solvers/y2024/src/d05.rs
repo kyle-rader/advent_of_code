@@ -32,7 +32,6 @@ fn part2(input: &str) -> Result<u64, String> {
 
 #[derive(Debug)]
 struct PageUpdater {
-    after: HashMap<u64, HashSet<u64>>,
     before: HashMap<u64, HashSet<u64>>,
 }
 
@@ -51,16 +50,6 @@ impl PageUpdater {
                     return false;
                 }
             }
-            // Check that all pages that must come after this page are after it
-            if let Some(pages_that_must_come_after) = self.after.get(&page) {
-                if !pages
-                    .iter()
-                    .skip(i + 1)
-                    .all(|x| !pages_that_must_come_after.contains(x))
-                {
-                    return false;
-                }
-            }
         }
         true
     }
@@ -69,16 +58,8 @@ impl PageUpdater {
 impl PartialEq for PageUpdater {
     fn eq(&self, other: &Self) -> bool {
         self.before.len() == other.before.len()
-            && self.after.len() == other.after.len()
             && self.before.iter().all(|(k, v)| {
                 if let Some(other_v) = other.before.get(k) {
-                    v.iter().all(|x| other_v.contains(x)) && v.len() == other_v.len()
-                } else {
-                    false
-                }
-            })
-            && self.after.iter().all(|(k, v)| {
-                if let Some(other_v) = other.after.get(k) {
                     v.iter().all(|x| other_v.contains(x)) && v.len() == other_v.len()
                 } else {
                     false
@@ -94,7 +75,6 @@ impl FromStr for PageUpdater {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut before: HashMap<u64, HashSet<u64>> = HashMap::new();
-        let mut after: HashMap<u64, HashSet<u64>> = HashMap::new();
 
         for line in s.lines() {
             let mut parts = line.split("|");
@@ -109,10 +89,9 @@ impl FromStr for PageUpdater {
                 .map_err(|e| format!("invalid next page: {}", e))?;
 
             before.entry(first).or_default().insert(second);
-            after.entry(second).or_default().insert(first);
         }
 
-        Ok(Self { after, before })
+        Ok(Self { before })
     }
 }
 
@@ -162,16 +141,6 @@ mod tests_y2024 {
             .expect("failed to parse");
 
         let expected = PageUpdater {
-            after: vec![
-                (13, vec![97, 61, 29, 47, 75, 53].into_iter().collect()),
-                (29, vec![97, 75, 61, 47, 53].into_iter().collect()),
-                (47, vec![97, 75].into_iter().collect()),
-                (53, vec![97, 61, 75, 47].into_iter().collect()),
-                (61, vec![97, 75, 47].into_iter().collect()),
-                (75, vec![97].into_iter().collect()),
-            ]
-            .into_iter()
-            .collect(),
             before: vec![
                 (97, vec![13, 61, 47, 29, 53, 75].into_iter().collect()),
                 (75, vec![29, 53, 47, 61, 13].into_iter().collect()),
