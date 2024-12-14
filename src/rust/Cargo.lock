@@ -2540,6 +2540,7 @@ dependencies = [
  "anyhow",
  "common",
  "nom",
+ "pretty_assertions",
  "regex",
  "test-case",
  "thiserror 2.0.6",
