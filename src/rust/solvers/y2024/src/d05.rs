@@ -27,7 +27,25 @@ fn part1(input: &str) -> Result<u64, String> {
 
 #[allow(dead_code)]
 fn part2(input: &str) -> Result<u64, String> {
-    Ok(0)
+    let mut parts = input.split("\n\n");
+    let rules = parts.next().ok_or("missing rules")?;
+    let updates = parts.next().ok_or("missing updates")?;
+
+    let rules = rules.parse::<PageUpdater>()?;
+
+    let updates: Vec<Vec<u64>> = updates
+        .split("\n")
+        .filter(|u| !u.is_empty())
+        .map(|u| u.split(',').map(u64::from_str).collect())
+        .collect::<Result<_, _>>()
+        .map_err(|e| e.to_string())?;
+
+    Ok(updates
+        .into_iter()
+        .filter(|u| !rules.valid(u))
+        .map(|u| rules.fix(u))
+        .map(|u| *u.get(u.len() / 2).expect("missing middle"))
+        .sum())
 }
 
 #[derive(Debug)]
@@ -52,6 +70,30 @@ impl PageUpdater {
             }
         }
         true
+    }
+
+    fn fix(&self, updates: Vec<u64>) -> Vec<u64> {
+        let mut updates = updates;
+        for i in 0..updates.len() {
+            let page = updates[i];
+            // Check if there is a rule that says the current page can only come
+            // before any of the pages we've already seen, and if so, swap the current page with that page.
+
+            if let Some(pages_that_must_come_before) = self.before.get(&page) {
+                if !updates
+                    .iter()
+                    .take(i)
+                    .all(|x| !pages_that_must_come_before.contains(x))
+                {
+                    let mut j = i;
+                    while j > 0 && pages_that_must_come_before.contains(&updates[j - 1]) {
+                        updates.swap(j, j - 1);
+                        j -= 1;
+                    }
+                }
+            }
+        }
+        updates
     }
 }
 
@@ -194,6 +236,20 @@ mod tests_y2024 {
         assert!(!rules.valid(&input));
     }
 
+    #[test_case(vec![75,97,47,61,53], vec![97,75,47,61,53])]
+    #[test_case(vec![61,13,29], vec![61, 29, 13])]
+    #[test_case(vec![97,13,75,29,47], vec![97,75,47,29,13])]
+    fn fix_update_works(input: Vec<u64>, expected: Vec<u64>) {
+        let rules = TEST_INPUT
+            .split("\n\n")
+            .next()
+            .expect("missing input!")
+            .parse::<PageUpdater>()
+            .expect("failed to parse");
+
+        assert_eq!(rules.fix(input), expected);
+    }
+
     #[test]
     fn part1_works() {
         assert_eq!(part1(INPUT), Ok(4766));
@@ -201,6 +257,6 @@ mod tests_y2024 {
 
     #[test]
     fn part2_works() {
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(6257));
     }
 }
