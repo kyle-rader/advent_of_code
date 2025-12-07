@@ -110,6 +110,7 @@ mod tests_y{year} {{
     }}
 
     #[test]
+    #[ignore = \"not implemented\"]
     fn part2_works() {{
         assert_eq!(part2(INPUT), Ok(0));
     }}
