@@ -8,4 +8,5 @@ anyhow = "1.0.100"
 common = { path = "../../common" }
 
 [dev-dependencies]
+pretty_assertions = "1.4.1"
 test-case = "3.3.1"
