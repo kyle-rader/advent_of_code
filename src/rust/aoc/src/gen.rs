@@ -106,12 +106,12 @@ mod tests_y{year} {{
 
     #[test]
     fn part1_works() {{
-        assert_eq!(part1(INPUT), Ok(42));
+        assert_eq!(part1(INPUT), Ok(0));
     }}
 
     #[test]
     fn part2_works() {{
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(0));
     }}
 }}
 "
