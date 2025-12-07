@@ -1,0 +1,11 @@
+[package]
+name = "y2025"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.100"
+common = { path = "../../common" }
+
+[dev-dependencies]
+test-case = "3.3.1"
