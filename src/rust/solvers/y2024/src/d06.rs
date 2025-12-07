@@ -1,6 +1,4 @@
-use std::{collections::HashSet, str::FromStr, usize};
-
-use common::grid::Grid;
+use std::{collections::HashSet, str::FromStr};
 
 #[allow(dead_code)]
 fn part1(input: &str) -> Result<u64, String> {
@@ -9,7 +7,7 @@ fn part1(input: &str) -> Result<u64, String> {
 }
 
 #[allow(dead_code)]
-fn part2(input: &str) -> Result<u64, String> {
+fn part2(_input: &str) -> Result<u64, String> {
     Ok(0)
 }
 
