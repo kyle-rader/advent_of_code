@@ -40,7 +40,7 @@ fn lowest_location(seeds: Vec<u64>, maps: Maps) -> u64 {
                 }
             }
             i += 1;
-            if i == 0 || i % 1_000_000 == 0 {
+            if i == 0 || i.is_multiple_of(1_000_000) {
                 println!("Processed {} of {}", i, total);
             }
             val

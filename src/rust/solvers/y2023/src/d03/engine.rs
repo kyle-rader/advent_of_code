@@ -143,7 +143,7 @@ impl From<&str> for Schematic {
             .collect::<Vec<Vec<char>>>();
 
         let length_y = data.len();
-        let length_x = data.get(0).unwrap_or(&vec![]).len();
+        let length_x = data.first().unwrap_or(&vec![]).len();
 
         Self {
             data,

@@ -13,6 +13,7 @@ fn part2(_input: &str) -> Result<u64, String> {
 
 const GUARD_MARKERS: [char; 4] = ['>', '<', '^', 'v'];
 type Pos = (usize, usize);
+type NextPosFn = Box<dyn Fn(&GuardMap) -> Option<Pos>>;
 
 struct GuardMap {
     map: Vec<Vec<char>>,
@@ -100,8 +101,7 @@ impl GuardMap {
 
         self.path.len()
     }
-
-    fn next_pos_fn(&self, dir: &Dir) -> Box<dyn Fn(&Self) -> Option<Pos>> {
+    fn next_pos_fn(&self, dir: &Dir) -> NextPosFn {
         Box::new(match dir {
             Dir::Up => Self::up,
             Dir::Down => Self::down,
