@@ -90,12 +90,12 @@ fn ensure_day(solver_dir: &Path, year: usize, day: usize) -> anyhow::Result<()> 
         let content = format!(
             "#[allow(dead_code)]
 fn part1(input: &str) -> Result<u64, String> {{
-    Ok(0)
+    todo!()
 }}
 
 #[allow(dead_code)]
 fn part2(input: &str) -> Result<u64, String> {{
-    Ok(0)
+    todo!()
 }}
 
 #[cfg(test)]
@@ -106,13 +106,13 @@ mod tests_y{year} {{
 
     #[test]
     fn part1_works() {{
-        assert_eq!(part1(INPUT), Ok(42));
+        assert_eq!(part1(INPUT), Ok(0));
     }}
 
     #[test]
     #[ignore = \"not implemented\"]
     fn part2_works() {{
-        assert_eq!(part2(INPUT), Ok(42));
+        assert_eq!(part2(INPUT), Ok(0));
     }}
 }}
 "
